@@ -1,0 +1,7 @@
+vtracer
+opencv-python
+notebook
+matplotlib
+torch
+torchvision
+git+https://github.com/facebookresearch/segment-anything.git
