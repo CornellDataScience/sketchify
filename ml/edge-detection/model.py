@@ -1,4 +1,4 @@
-from image_io import ImageIO
+# from image_io import ImageIO
 import io
 from PIL import Image
 import cv2
@@ -26,3 +26,10 @@ def edge_detection(f: bytes) -> bytes:
     image = np.array(Image.open(io.BytesIO(f)))
 
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+
+if __name__ == "__main__":
+    with open("'../../public/Glazed-Donut.jpg'", 'rb') as f:
+        r = f.read()
+
+    edge_detection(r)
