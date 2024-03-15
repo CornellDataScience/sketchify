@@ -15,14 +15,9 @@ def edge_detection(f: bytes) -> bytes:
     Returns:
         A binary file representing an image JPG or PNG
     """
-    # try:
-    #     color_im = ImageIO.read_image(f)
-    # except FileNotFoundError:
-    #     print(f"Error: File '{f}' not found in the current directory.")
-    #     return
-
-    # gray_im = ImageIO.convert_grayscale(color_im)
 
     image = np.array(Image.open(io.BytesIO(f)))
 
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    edges = cv2.Canny(gray_image, 100, 200)
