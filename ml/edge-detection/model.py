@@ -1,4 +1,3 @@
-from image_io import ImageIO
 import io
 from PIL import Image
 import cv2
@@ -21,3 +20,5 @@ def edge_detection(f: bytes) -> bytes:
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
     edges = cv2.Canny(gray_image, 100, 200)
+
+
