@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 # from image_io import ImageIO
+=======
+>>>>>>> 9a4ee120ba02a05f92347a691fdeea7353d516ee
 import io
 from PIL import Image
 import cv2
@@ -15,13 +18,6 @@ def edge_detection(f: bytes) -> bytes:
     Returns:
         A binary file representing an image JPG or PNG
     """
-    # try:
-    #     color_im = ImageIO.read_image(f)
-    # except FileNotFoundError:
-    #     print(f"Error: File '{f}' not found in the current directory.")
-    #     return
-
-    # gray_im = ImageIO.convert_grayscale(color_im)
 
     image = np.array(Image.open(io.BytesIO(f)))
 
