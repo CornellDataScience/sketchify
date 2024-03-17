@@ -97,7 +97,7 @@ def contour_preparation(img):
         A binary file representing an image JPG or PNG
     """
 
-     # Dilate the edges before denoising
+    # Dilate the edges before denoising
     # Necessary to prevent thin prominent lines from weathering away
     dilated_edges = cv2.dilate(img, (3,3), iterations=1)
     
