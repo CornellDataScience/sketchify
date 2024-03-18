@@ -90,6 +90,12 @@ br = (1200, 1200)  # Bottom-right corner of the image (adjust based on your imag
 # Now, let's segment the image
 segmented_image_bytes = image_segmentation(doughnut_bytes, tl, br)
 
+# Display the mask
+image = np.array(Image.open(io.BytesIO(segmented_image_bytes)))
+plt.imshow(image)
+plt.axis('off')
+plt.show()
+
 # Finally, let's save the segmented image to a new file so we can view it
 segmented_image_path = 'Segmented-Glazed-Donut.png'
 with open(segmented_image_path, 'wb') as f:
