@@ -1,3 +1,6 @@
+# Model checkpoint
+ml/image_segmentation/sam_vit_h_4b8939.pth
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
