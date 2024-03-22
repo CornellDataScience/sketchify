@@ -81,30 +81,3 @@ def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int], check
     img_byte_arr = img_byte_arr.getvalue()
 
     return img_byte_arr
-
-
-# First, let's read the image file and convert it to bytes
-# Adjust the path to where your image is stored
-doughnut_image_path = '../../public/bear_fishing.jpg'
-with open(doughnut_image_path, 'rb') as f:
-    doughnut_bytes = f.read()
-
-# Define the bounding box coordinates (top-left and bottom-right)
-# Here, I'm assuming you want to segment the whole image
-# But you can adjust these coordinates based on the doughnut's position in your image
-tl = (1142, 134)  # Top-left corner of the image (adjust based on your image)
-br = (1739, 1064)  # Bottom-right corner of the image (adjust based on your image)
-
-# Now, let's segment the image
-segmented_image_bytes = image_segmentation(doughnut_bytes, tl, br, CHECKPOINT)
-
-# Display the mask
-image = np.array(Image.open(io.BytesIO(segmented_image_bytes)))
-plt.imshow(image)
-plt.axis('off')
-plt.show()
-
-# Finally, let's save the segmented image to a new file so we can view it
-segmented_image_path = 'Segmented-bear-fishing.png'
-with open(segmented_image_path, 'wb') as f:
-    f.write(segmented_image_bytes)
