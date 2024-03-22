@@ -1,6 +1,5 @@
 from segment_anything import sam_model_registry, SamAutomaticMaskGenerator, SamPredictor
 import torch
-import torchvision
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2 as cv
@@ -9,24 +8,10 @@ import io
 from PIL import Image
 sys.path.append("..")  # Ensure the path includes 'segment_anything' module
 
-
-sam = sam_model_registry["default"](checkpoint="sam_vit_h_4b8939.pth")
-checkpoint = "sam_vit_h_4b8939.pth"
-model_type = "vit_h"
-device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-sam = sam_model_registry[model_type](checkpoint=checkpoint).to(device=device)
-mask_generator = SamAutomaticMaskGenerator(sam)
-predictor = SamPredictor(sam)
-
-mask_generator = SamAutomaticMaskGenerator(sam)
-
-image_bgr = cv.imread('../../public/Glazed-Donut.jpg')
-image_rgb = cv.cvtColor(image_bgr, cv.COLOR_BGR2RGB)
-
-sam_result = mask_generator.generate(image_rgb)
+CHECKPOINT = "sam_vit_h_4b8939.pth"
 
 
-def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int]) -> bytes:
+def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int], checkpoint: str) -> bytes:
     """
     Segment a specific area of the image defined by the bounding box coordinates.
 
@@ -34,10 +19,27 @@ def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int]) -> by
         f: binary file representing an image JPG or PNG.
         tl: top-left coordinate of the bounding box (x,y).
         br: bottom-right coordinate of the bounding box (x,y).
+        checkpoint: the path to the model checkpoint
 
     Returns:
         A binary file representing the segmented area of the image in JPG or PNG format.
     """
+    # Define vars for SegmentAnything
+    sam = sam_model_registry["default"](checkpoint=checkpoint)
+    model_type = "vit_h"
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    sam = sam_model_registry[model_type](
+        checkpoint=checkpoint).to(device=device)
+    mask_generator = SamAutomaticMaskGenerator(sam)
+    predictor = SamPredictor(sam)
+
+    mask_generator = SamAutomaticMaskGenerator(sam)
+
+    image_bgr = cv.imread('../../public/Glazed-Donut.jpg')
+    image_rgb = cv.cvtColor(image_bgr, cv.COLOR_BGR2RGB)
+
+    sam_result = mask_generator.generate(image_rgb)
+
     # Convert bytes data to an image
     image_stream = io.BytesIO(f)
     image = Image.open(image_stream).convert('RGB')
@@ -94,7 +96,7 @@ tl = (1142, 134)  # Top-left corner of the image (adjust based on your image)
 br = (1739, 1064)  # Bottom-right corner of the image (adjust based on your image)
 
 # Now, let's segment the image
-segmented_image_bytes = image_segmentation(doughnut_bytes, tl, br)
+segmented_image_bytes = image_segmentation(doughnut_bytes, tl, br, CHECKPOINT)
 
 # Display the mask
 image = np.array(Image.open(io.BytesIO(segmented_image_bytes)))
