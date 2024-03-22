@@ -1,5 +1,8 @@
 # Model checkpoint
-ml/image_segmentation/sam_vit_h_4b8939.pth
+sam_vit_h_4b8939.pth
+
+# node_modules
+node_modules
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
