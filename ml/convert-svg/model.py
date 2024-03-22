@@ -39,14 +39,3 @@ def convert_svg(f: bytes) -> bytes:
     os.remove(output_path)
 
     return binary_data
-
-
-if __name__ == "__main__":
-    input_path = "../../public/coloring002.jpg"
-    output_path = "../../public/coloring002.svg"
-
-    # Read as Binary into variable r
-    with open(input_path, 'rb') as input_file:
-        input_binary = input_file.read()
-
-    res = convert_svg(input_binary)
