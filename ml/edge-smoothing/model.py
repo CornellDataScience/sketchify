@@ -19,24 +19,20 @@ def edge_smoothing(f: bytes) -> bytes:
     kernel_opening = (3, 3)
     kernel_closing = (3, 3)
 
-    #display(f, remove_salt_and_pepper(f))
-
     # Prepare the image to be contoured
     prepared_img = contour_preparation(f)
-
     denoised_img = denoising(prepared_img)
 
     # Contour the image
     contours = contour_image(denoised_img)
 
     # Enhance the image for plotting preparation
-
     # Create an empty image to draw filtered contours
     filtered_image = np.zeros_like(img)
 
     # Draw the filtered contours on the empty image
     new_image = cv2.drawContours(filtered_image, contours, -1, (255, 255, 255), thickness=cv2.FILLED)
-    
+
     # Close all of the edges
     closed_img = closing(new_image, kernel_closing, 2)
 
@@ -63,7 +59,7 @@ def opening(img, kernel, iterations):
     """
 
     img_erosion = cv2.erode(img, kernel, iterations=iterations)
-    #img_dilation = cv2.dilate(img_erosion, kernel, iterations=iterations) 
+    #img_dilation = cv2.dilate(img_erosion, kernel, iterations=iterations)
     return img_erosion
 
 # method to execute closing (gaps become smaller). the kernel size and iteration amount affects how much closing occurs
@@ -81,7 +77,7 @@ def closing(img, kernel, iterations):
     """
 
     closed_img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel, iterations=1)
-    img_dilation = cv2.dilate(closed_img, kernel, iterations=iterations) 
+    img_dilation = cv2.dilate(closed_img, kernel, iterations=iterations)
     #img_erosion = cv2.erode(img_dilation, kernel, iterations=iterations)
     return img_dilation
 
@@ -100,11 +96,11 @@ def contour_preparation(img):
     # Dilate the edges before denoising
     # Necessary to prevent thin prominent lines from weathering away
     dilated_edges = cv2.dilate(img, (3,3), iterations=1)
-    
+
     # Denoising the image
     dst = cv2.fastNlMeansDenoising(dilated_edges, 11, 21, 25)
 
-    # Setting a threshold for contour finding 
+    # Setting a threshold for contour finding
     # Getting all colored pixels and setting them to white if above the threshold
     ret, thresh = cv2.threshold(dst, 120, 255, cv2.THRESH_BINARY)
 
@@ -123,8 +119,8 @@ def contour_image(img):
     """
 
     # Extracting the contours of the image
-    contours, hierarchy = cv2.findContours(img,  
-    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) 
+    contours, hierarchy = cv2.findContours(img,
+    cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
     # Establish a threshold for the minimum area of a contour
     min_area_threshold = 10
@@ -153,11 +149,12 @@ def denoising(img):
         for a in range(len(i)):
             if i[a]<=70:
                 i[a] = 0
-    # Create the sharpening kernel 
-    sharpen_kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]]) 
-  
-    # Sharpen the image 
+    # Create the sharpening kernel
+    sharpen_kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+
+    # Sharpen the image
     sharpened_image = cv2.filter2D(dst, -1, sharpen_kernel)
+
     return sharpened_image
 
 # method to display the output image
@@ -172,7 +169,7 @@ def display(img_og, img_new):
     Returns:
         A binary file representing an image JPG or PNG
     """
-    
+
     plt.subplot(121),plt.imshow(img_og,cmap = 'gray')
     plt.title('Original Image'), plt.xticks([]), plt.yticks([])
     plt.subplot(122),plt.imshow(img_new,cmap = 'gray')
@@ -180,5 +177,5 @@ def display(img_og, img_new):
     plt.show()
 
 # Run the edge smoothing function on an image
-img = cv2.imread('../../public/canny_output.png', 0) 
+img = cv2.imread('../../public/canny_output.png', 0)
 edge_smoothing(img)
