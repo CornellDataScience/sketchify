@@ -11,4 +11,3 @@ def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int]) -> by
     Returns:
         A binary file representing an image JPG or PNG
     """
-    pass
