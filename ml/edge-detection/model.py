@@ -29,7 +29,7 @@ def edge_detection(f: bytes) -> bytes:
 
 
 if __name__ == "__main__":
-    with open("../../public/Glazed-Donut.jpg", 'rb') as f:
+    with open("../../public/bear.png", 'rb') as f:
         r = f.read()
 
     res = edge_detection(r)

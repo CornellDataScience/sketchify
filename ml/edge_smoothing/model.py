@@ -173,3 +173,13 @@ def display(img_og, img_new):
     plt.subplot(122), plt.imshow(img_new, cmap='gray')
     plt.title('Altered Image'), plt.xticks([]), plt.yticks([])
     plt.show()
+
+
+# Run the edge smoothing function on an image
+img = cv2.imread(
+    '/Users/darrenkey/Documents/TEED/result/BIPED2CLASSIC/fused/bear.png', 0)
+inv_img = cv2.bitwise_not(img)
+
+edge_smoothing(inv_img)
+
+# display(img, inv_img)
