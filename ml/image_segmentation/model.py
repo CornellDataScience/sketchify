@@ -10,7 +10,6 @@ sys.path.append("..")  # Ensure the path includes 'segment_anything' module
 
 CHECKPOINT = "sam_vit_h_4b8939.pth"
 
-
 def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int], checkpoint: str) -> bytes:
     """
     Segment a specific area of the image defined by the bounding box coordinates.
