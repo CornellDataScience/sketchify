@@ -9,19 +9,19 @@ import torch
 import os
 import time
 
-# Get computing device
-device = torch.device('cpu' if torch.cuda.device_count() == 0
-                      else 'cuda')
 
-# Instantiate model and move it to the computing device
-model = TED().to(device)
-
-
-def teed_inference(model, folder_path: str):
+def teed_inference(folder_path: str):
     """
     Runs inference on all images in a folder
     """
+    # Get computing device
+    device = torch.device('cpu' if torch.cuda.device_count() == 0
+                          else 'cuda')
 
+    # Instantiate model and move it to the computing device
+    model = TED().to(device)
+
+    # START TEED
     checkpoint_path = os.path.join(
         "checkpoints", 'BIPED', "5/5_model.pth")
     ini_epoch = 8
@@ -80,4 +80,4 @@ def teed_inference(model, folder_path: str):
             torch.cuda.empty_cache()
 
 
-teed_inference(model, 'input')
+teed_inference('input')
