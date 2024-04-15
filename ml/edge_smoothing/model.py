@@ -6,6 +6,7 @@ from matplotlib import pyplot as plt
 import io
 import skimage.filters as filters
 
+
 def edge_smoothing(f: bytes) -> bytes:
     """
     Converts an edge detection output into a coloring book outline, including
@@ -49,7 +50,7 @@ def edge_smoothing(f: bytes) -> bytes:
     # Display the original and enhanced image
     display(image, inverted_img)
 
-    #byteImg = inverted_img.tobytes()
+    # byteImg = inverted_img.tobytes()
 
     # Convert numpy array back to PIL Image
     segmented_img_pil = Image.fromarray(
@@ -63,7 +64,7 @@ def edge_smoothing(f: bytes) -> bytes:
 
     return img_byte_arr
 
-    #return byteImg
+    # return byteImg
 
 
 def opening(img, kernel, iterations):
@@ -118,7 +119,6 @@ def contour_preparation(img):
     dilated_edges = cv2.dilate(img, (3, 3), iterations=1)
 
     # Denoising the image
-    print('a')
     dst = cv2.fastNlMeansDenoising(dilated_edges, 11, 21, 25)
 
     # Setting a threshold for contour finding
@@ -140,13 +140,14 @@ def contour_image(img):
     """
 
     # Convert the image to grayscale so that it can be handled by the "findContours" method
-    #gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # Ensure the image is in 8-bit format
     gray_img = cv2.convertScaleAbs(img)
 
     # Now you can find contours on the grayscale image
-    contours, hierarchy = cv2.findContours(gray_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    contours, hierarchy = cv2.findContours(
+        gray_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
     # Establish a threshold for the minimum area of a contour
     min_area_threshold = 10
@@ -185,7 +186,6 @@ def denoising(img):
 
 
 def display(img_og, img_new):
-
     """
     Graphs and displays the original image and the altered image
 
