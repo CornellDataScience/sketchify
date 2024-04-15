@@ -12,7 +12,8 @@ import torch.nn.functional as F
 from torch import nn
 
 # import activation functions
-import utils.AF.Fsmish as Func
+# import utils.AF.Fsmish as Func
+from .Fsmish import smish as Funcsmish
 
 
 class Smish(nn.Module):
@@ -40,4 +41,4 @@ class Smish(nn.Module):
         """
         Forward pass of the function.
         """
-        return Func.smish(input)
+        return Funcsmish(input)

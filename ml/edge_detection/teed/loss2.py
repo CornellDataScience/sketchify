@@ -1,6 +1,6 @@
 import torch
 import torch.nn.functional as F
-from utils.AF.Fsmish import smish as Fsmish
+from .utils.AF.Fsmish import smish as Fsmish
 
 
 def bdcn_loss2(inputs, targets, l_weight=1.1):

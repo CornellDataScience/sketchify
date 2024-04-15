@@ -9,7 +9,9 @@ import torch.nn.functional as F
 from torch import nn
 
 # import activation functions
-import utils.AF.Fmish as Func
+# import .utils.AF.Fmish as Func
+# from .utils.AF.Fmish import mish
+from .Fmish import mish as Funcmish
 
 
 class Mish(nn.Module):
@@ -40,4 +42,4 @@ class Mish(nn.Module):
         if torch.__version__ >= "1.9":
             return F.mish(input)
         else:
-            return Func.mish(input)
+            return Funcmish(input)

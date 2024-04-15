@@ -8,9 +8,9 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from utils.AF.Fsmish import smish as Fsmish
-from utils.AF.Xsmish import Smish
-from utils.img_processing import count_parameters
+from .utils.AF.Fsmish import smish as Fsmish
+from .utils.AF.Xsmish import Smish
+from .utils.img_processing import count_parameters
 
 
 def weight_init(m):

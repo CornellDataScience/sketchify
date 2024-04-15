@@ -1,8 +1,8 @@
 from __future__ import print_function
-from utils.img_processing import save_image_batch_to_disk
-from ted import TED  # TEED architecture
-from loss2 import *
-from dataset import TestDataset
+from .utils.img_processing import save_image_batch_to_disk
+from .ted import TED  # TEED architecture
+from .loss2 import *
+from .dataset import TestDataset
 from torch.utils.data import DataLoader
 import torch
 
@@ -23,7 +23,7 @@ def teed_inference(folder_path: str):
 
     # START TEED
     checkpoint_path = os.path.join(
-        "checkpoints", 'BIPED', "5/5_model.pth")
+        "edge_detection", "teed", "checkpoints", 'BIPED', "5/5_model.pth")
     ini_epoch = 8
     model.load_state_dict(torch.load(checkpoint_path,
                                      map_location=device))
@@ -80,4 +80,4 @@ def teed_inference(folder_path: str):
             torch.cuda.empty_cache()
 
 
-teed_inference('input')
+# teed_inference('input')
