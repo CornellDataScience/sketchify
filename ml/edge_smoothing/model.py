@@ -1,7 +1,9 @@
+from PIL import Image
 import cv2
 import numpy as np
 import PIL as pil
 from matplotlib import pyplot as plt
+import io
 import skimage.filters as filters
 
 
@@ -16,11 +18,16 @@ def edge_smoothing(f: bytes) -> bytes:
     Returns:
         A binary file representing an image JPG or PNG
     """
+    # Converts binary file to numpy array
+    image = np.array(Image.open(io.BytesIO(f)))
+
+    # Sets the kernels to be used for opening and closing
+    # These kernels can be adjusted to be the best-performing variant.
     kernel_opening = (3, 3)
     kernel_closing = (3, 3)
 
     # Prepare the image to be contoured
-    prepared_img = contour_preparation(f)
+    prepared_img = contour_preparation(image)
     denoised_img = denoising(prepared_img)
 
     # Contour the image
@@ -28,7 +35,7 @@ def edge_smoothing(f: bytes) -> bytes:
 
     # Enhance the image for plotting preparation
     # Create an empty image to draw filtered contours
-    filtered_image = np.zeros_like(img)
+    filtered_image = np.zeros_like(image)
 
     # Draw the filtered contours on the empty image
     new_image = cv2.drawContours(
@@ -41,9 +48,23 @@ def edge_smoothing(f: bytes) -> bytes:
     inverted_img = cv2.bitwise_not(closed_img)
 
     # Display the original and enhanced image
-    display(f, inverted_img)
+    display(image, inverted_img)
 
-    return inverted_img
+    # byteImg = inverted_img.tobytes()
+
+    # Convert numpy array back to PIL Image
+    segmented_img_pil = Image.fromarray(
+        cv2.cvtColor(inverted_img, cv2.COLOR_RGB2BGR))
+
+    # Save the segmented image to bytes
+    img_byte_arr = io.BytesIO()
+    # You can change 'PNG' to 'JPEG' if you prefer
+    segmented_img_pil.save(img_byte_arr, format='JPEG')
+    img_byte_arr = img_byte_arr.getvalue()
+
+    return img_byte_arr
+
+    # return byteImg
 
 
 def opening(img, kernel, iterations):
@@ -117,9 +138,16 @@ def contour_image(img):
     Returns:
         A binary file representing an image JPG or PNG
     """
-    # Extracting the contours of the image
-    contours, hierarchy = cv2.findContours(img,
-                                           cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+
+    # Convert the image to grayscale so that it can be handled by the "findContours" method
+    # gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    # Ensure the image is in 8-bit format
+    gray_img = cv2.convertScaleAbs(img)
+
+    # Now you can find contours on the grayscale image
+    contours, hierarchy = cv2.findContours(
+        gray_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
 
     # Establish a threshold for the minimum area of a contour
     min_area_threshold = 10
@@ -144,10 +172,10 @@ def denoising(img):
     """
     dst = cv2.fastNlMeansDenoising(img, None, 11, 25, 43)
 
-    for i in dst:
-        for a in range(len(i)):
-            if i[a] <= 70:
-                i[a] = 0
+    for y in range(dst.shape[0]):  # Loop over rows
+        for x in range(dst.shape[1]):  # Loop over columns
+            if dst[y][x] <= 70:
+                dst[y][x] = 0
     # Create the sharpening kernel
     sharpen_kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
 
