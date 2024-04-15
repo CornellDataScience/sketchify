@@ -22,7 +22,7 @@ def convert_svg(f: bytes) -> bytes:
         tmp_input_path = tmp_input.name
 
     # Define the output path for the SVG file
-    output_path = "../../ml/convert-svg/output.svg"
+    output_path = "../ml/convert_svg/output.svg"
 
     # Call the vtracer library to convert the temporary file to SVG
     vtracer.convert_image_to_svg_py(tmp_input_path,
