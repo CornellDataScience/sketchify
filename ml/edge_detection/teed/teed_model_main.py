@@ -73,7 +73,7 @@ def teed_inference(folder_path: str):
             tmp_duration = time.perf_counter() - end
             total_duration.append(tmp_duration)
             save_image_batch_to_disk(preds,
-                                     "output",  # output_dir
+                                     "edge_detection/teed/output",  # output_dir
                                      file_names,
                                      image_shape,
                                      arg=args)

@@ -18,7 +18,7 @@ def edge_detection(f: bytes) -> bytes:
     """
     # Create a temporary file to write the input binary data (image)
     input_path = "edge_detection/teed/input/image.png"
-    output_path = "edge_detection/output/image.png"
+    output_path = "edge_detection/teed/output/fused/image.png"
     with open(input_path, "wb") as file:
         file.write(f)
 

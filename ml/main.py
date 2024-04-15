@@ -12,9 +12,9 @@ with open(image_path, 'rb') as f:
 tl = (1142, 134)  # Top-left corner of the image (adjust based on your image)
 br = (1739, 1064)  # Bottom-right corner of the image (adjust based on your image)
 
-segmented_image = image_segmentation(
-    image_bytes, tl, br, "image_segmentation/sam_vit_h_4b8939.pth")
-edged_image = edge_detection(segmented_image)
+# segmented_image = image_segmentation(
+#     image_bytes, tl, br, "image_segmentation/sam_vit_h_4b8939.pth")
+edged_image = edge_detection(image_bytes)
 smoothed_image = edge_smoothing(edged_image)
 svg = convert_svg(smoothed_image)
 
