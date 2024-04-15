@@ -26,17 +26,18 @@ def weight_init(m):
         if m.bias is not None:
             torch.nn.init.zeros_(m.bias)
 
+
 class CoFusion(nn.Module):
     # from LDC
 
     def __init__(self, in_ch, out_ch):
         super(CoFusion, self).__init__()
         self.conv1 = nn.Conv2d(in_ch, 32, kernel_size=3,
-                               stride=1, padding=1) # before 64
-        self.conv3= nn.Conv2d(32, out_ch, kernel_size=3,
-                               stride=1, padding=1)# before 64  instead of 32
+                               stride=1, padding=1)  # before 64
+        self.conv3 = nn.Conv2d(32, out_ch, kernel_size=3,
+                               stride=1, padding=1)  # before 64  instead of 32
         self.relu = nn.ReLU()
-        self.norm_layer1 = nn.GroupNorm(4, 32) # before 64
+        self.norm_layer1 = nn.GroupNorm(4, 32)  # before 64
 
     def forward(self, x):
         # fusecat = torch.cat(x, dim=1)
@@ -46,47 +47,49 @@ class CoFusion(nn.Module):
 
 
 class CoFusion2(nn.Module):
-        # TEDv14-3
+    # TEDv14-3
     def __init__(self, in_ch, out_ch):
         super(CoFusion2, self).__init__()
         self.conv1 = nn.Conv2d(in_ch, 32, kernel_size=3,
-                               stride=1, padding=1) # before 64
+                               stride=1, padding=1)  # before 64
         # self.conv2 = nn.Conv2d(32, 32, kernel_size=3,
         #                        stride=1, padding=1)# before 64
         self.conv3 = nn.Conv2d(32, out_ch, kernel_size=3,
-                               stride=1, padding=1)# before 64  instead of 32
-        self.smish= Smish()#nn.ReLU(inplace=True)
-
+                               stride=1, padding=1)  # before 64  instead of 32
+        self.smish = Smish()  # nn.ReLU(inplace=True)
 
     def forward(self, x):
         # fusecat = torch.cat(x, dim=1)
         attn = self.conv1(self.smish(x))
-        attn = self.conv3(self.smish(attn)) # before , )dim=1)
+        attn = self.conv3(self.smish(attn))  # before , )dim=1)
 
         # return ((fusecat * attn).sum(1)).unsqueeze(1)
         return ((x * attn).sum(1)).unsqueeze(1)
+
 
 class DoubleFusion(nn.Module):
     # TED fusion before the final edge map prediction
     def __init__(self, in_ch, out_ch):
         super(DoubleFusion, self).__init__()
         self.DWconv1 = nn.Conv2d(in_ch, in_ch*8, kernel_size=3,
-                               stride=1, padding=1, groups=in_ch) # before 64
+                                 stride=1, padding=1, groups=in_ch)  # before 64
         self.PSconv1 = nn.PixelShuffle(1)
 
         self.DWconv2 = nn.Conv2d(24, 24*1, kernel_size=3,
-                               stride=1, padding=1,groups=24)# before 64  instead of 32
+                                 stride=1, padding=1, groups=24)  # before 64  instead of 32
 
-        self.AF= Smish()#XAF() #nn.Tanh()# XAF() #   # Smish()#
-
+        self.AF = Smish()  # XAF() #nn.Tanh()# XAF() #   # Smish()#
 
     def forward(self, x):
         # fusecat = torch.cat(x, dim=1)
-        attn = self.PSconv1(self.DWconv1(self.AF(x))) # #TEED best res TEDv14 [8, 32, 352, 352]
+        # TEED best res TEDv14 [8, 32, 352, 352]
+        attn = self.PSconv1(self.DWconv1(self.AF(x)))
 
-        attn2 = self.PSconv1(self.DWconv2(self.AF(attn))) # #TEED best res TEDv14[8, 3, 352, 352]
+        # TEED best res TEDv14[8, 3, 352, 352]
+        attn2 = self.PSconv1(self.DWconv2(self.AF(attn)))
 
-        return Fsmish(((attn2 +attn).sum(1)).unsqueeze(1)) #TED best res
+        return Fsmish(((attn2 + attn).sum(1)).unsqueeze(1))  # TED best res
+
 
 class _DenseLayer(nn.Sequential):
     def __init__(self, input_features, out_features):
@@ -97,6 +100,7 @@ class _DenseLayer(nn.Sequential):
         self.add_module('smish1', Smish()),
         self.add_module('conv2', nn.Conv2d(out_features, out_features,
                                            kernel_size=3, stride=1, bias=True))
+
     def forward(self, x):
         x1, x2 = x
 
@@ -126,7 +130,7 @@ class UpConvBlock(nn.Module):
 
     def make_deconv_layers(self, in_features, up_scale):
         layers = []
-        all_pads=[0,0,1,3,7]
+        all_pads = [0, 0, 1, 3, 7]
         for i in range(up_scale):
             kernel_size = 2 ** up_scale
             pad = all_pads[up_scale]  # kernel_size-1
@@ -149,7 +153,7 @@ class SingleConvBlock(nn.Module):
     def __init__(self, in_features, out_features, stride, use_ac=False):
         super(SingleConvBlock, self).__init__()
         # self.use_bn = use_bs
-        self.use_ac=use_ac
+        self.use_ac = use_ac
         self.conv = nn.Conv2d(in_features, out_features, 1, stride=stride,
                               bias=True)
         if self.use_ac:
@@ -161,6 +165,7 @@ class SingleConvBlock(nn.Module):
             return self.smish(x)
         else:
             return x
+
 
 class DoubleConvBlock(nn.Module):
     def __init__(self, in_features, mid_features,
@@ -175,7 +180,7 @@ class DoubleConvBlock(nn.Module):
         self.conv1 = nn.Conv2d(in_features, mid_features,
                                3, padding=1, stride=stride)
         self.conv2 = nn.Conv2d(mid_features, out_features, 3, padding=1)
-        self.smish= Smish()#nn.ReLU(inplace=True)
+        self.smish = Smish()  # nn.ReLU(inplace=True)
 
     def forward(self, x):
         x = self.conv1(x)
@@ -195,7 +200,8 @@ class TED(nn.Module):
         super(TED, self).__init__()
         self.block_1 = DoubleConvBlock(3, 16, 16, stride=2,)
         self.block_2 = DoubleConvBlock(16, 32, use_act=False)
-        self.dblock_3 = _DenseBlock(1, 32, 48) # [32,48,100,100] before (2, 32, 64)
+        # [32,48,100,100] before (2, 32, 64)
+        self.dblock_3 = _DenseBlock(1, 32, 48)
 
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
@@ -208,27 +214,28 @@ class TED(nn.Module):
         # USNet
         self.up_block_1 = UpConvBlock(16, 1)
         self.up_block_2 = UpConvBlock(32, 1)
-        self.up_block_3 = UpConvBlock(48, 2) # (32, 64, 1)
+        self.up_block_3 = UpConvBlock(48, 2)  # (32, 64, 1)
 
-        self.block_cat = DoubleFusion(3,3) # TEED: DoubleFusion
+        self.block_cat = DoubleFusion(3, 3)  # TEED: DoubleFusion
 
         self.apply(weight_init)
 
     def slice(self, tensor, slice_shape):
         t_shape = tensor.shape
         img_h, img_w = slice_shape
-        if img_w!=t_shape[-1] or img_h!=t_shape[2]:
+        if img_w != t_shape[-1] or img_h != t_shape[2]:
             new_tensor = F.interpolate(
-                tensor, size=(img_h, img_w), mode='bicubic',align_corners=False)
+                tensor, size=(img_h, img_w), mode='bicubic', align_corners=False)
 
         else:
-            new_tensor=tensor
+            new_tensor = tensor
         # tensor[..., :height, :width]
         return new_tensor
-    def resize_input(self,tensor):
+
+    def resize_input(self, tensor):
         t_shape = tensor.shape
         if t_shape[2] % 8 != 0 or t_shape[3] % 8 != 0:
-            img_w= ((t_shape[3]// 8) + 1) * 8
+            img_w = ((t_shape[3] // 8) + 1) * 8
             img_h = ((t_shape[2] // 8) + 1) * 8
             new_tensor = F.interpolate(
                 tensor, size=(img_h, img_w), mode='bicubic', align_corners=False)
@@ -243,23 +250,24 @@ class TED(nn.Module):
         data = data1[:, :, crop_h:crop_h + h, crop_w:crop_w + w]
         return data
 
-
     def forward(self, x, single_test=False):
         assert x.ndim == 4, x.shape
-         # supose the image size is 352x352
+        # supose the image size is 352x352
 
         # Block 1
-        block_1 = self.block_1(x) # [8,16,176,176]
-        block_1_side = self.side_1(block_1) # 16 [8,32,88,88]
+        block_1 = self.block_1(x)  # [8,16,176,176]
+        block_1_side = self.side_1(block_1)  # 16 [8,32,88,88]
 
         # Block 2
-        block_2 = self.block_2(block_1) # 32 # [8,32,176,176]
-        block_2_down = self.maxpool(block_2) # [8,32,88,88]
-        block_2_add = block_2_down + block_1_side # [8,32,88,88]
+        block_2 = self.block_2(block_1)  # 32 # [8,32,176,176]
+        block_2_down = self.maxpool(block_2)  # [8,32,88,88]
+        block_2_add = block_2_down + block_1_side  # [8,32,88,88]
 
         # Block 3
-        block_3_pre_dense = self.pre_dense_3(block_2_down) # [8,64,88,88] block 3 L connection
-        block_3, _ = self.dblock_3([block_2_add, block_3_pre_dense]) # [8,64,88,88]
+        # [8,64,88,88] block 3 L connection
+        block_3_pre_dense = self.pre_dense_3(block_2_down)
+        block_3, _ = self.dblock_3(
+            [block_2_add, block_3_pre_dense])  # [8,64,88,88]
 
         # upsampling blocks
         out_1 = self.up_block_1(block_1)

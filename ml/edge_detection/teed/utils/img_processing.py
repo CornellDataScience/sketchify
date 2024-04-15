@@ -28,6 +28,7 @@ def image_normalization(img, img_min=0, img_max=255,
         ((np.max(img) - np.min(img)) + epsilon) + img_min
     return img
 
+
 def count_parameters(model=None):
     if model is not None:
         return sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -42,15 +43,15 @@ def save_image_batch_to_disk(tensor, output_dir, file_names, img_shape=None, arg
     predict_all = arg.predict_all
     if not arg.is_testing:
         assert len(tensor.shape) == 4, tensor.shape
-        img_height,img_width = img_shape[0].item(),img_shape[1].item()
+        img_height, img_width = img_shape[0].item(), img_shape[1].item()
 
         for tensor_image, file_name in zip(tensor, file_names):
             image_vis = kn.utils.tensor_to_image(
-                torch.sigmoid(tensor_image))#[..., 0]
+                torch.sigmoid(tensor_image))  # [..., 0]
             image_vis = (255.0*(1.0 - image_vis)).astype(np.uint8)
             output_file_name = os.path.join(output_dir, file_name)
             # print('image vis size', image_vis.shape)
-            image_vis =cv2.resize(image_vis, (img_width, img_height))
+            image_vis = cv2.resize(image_vis, (img_width, img_height))
             assert cv2.imwrite(output_file_name, image_vis)
             assert cv2.imwrite('checkpoints/current_res/'+file_name, image_vis)
             # print(f"Image saved in {output_file_name}")
@@ -59,8 +60,8 @@ def save_image_batch_to_disk(tensor, output_dir, file_names, img_shape=None, arg
 
             tensor, tensor2 = tensor
             fuse_name = 'fusedCH'
-            av_name='avgCH'
-            is_2tensors=True
+            av_name = 'avgCH'
+            is_2tensors = True
             edge_maps2 = []
             for i in tensor2:
                 tmp = torch.sigmoid(i).cpu().detach().numpy()
@@ -69,10 +70,10 @@ def save_image_batch_to_disk(tensor, output_dir, file_names, img_shape=None, arg
         else:
             fuse_name = 'fused'
             # av_name = 'avg'
-            tensor2=None
+            tensor2 = None
             tmp_img2 = None
 
-        output_dir_f = os.path.join(output_dir, fuse_name)# normal execution
+        output_dir_f = os.path.join(output_dir, fuse_name)  # normal execution
         # output_dir_f = output_dir# for DMRIR
         # output_dir_a = os.path.join(output_dir, av_name)
         os.makedirs(output_dir_f, exist_ok=True)
@@ -80,12 +81,12 @@ def save_image_batch_to_disk(tensor, output_dir, file_names, img_shape=None, arg
         if predict_all:
             all_data_dir = os.path.join(output_dir, "all_edges")
             os.makedirs(all_data_dir, exist_ok=True)
-            out1_dir = os.path.join(all_data_dir,"o1")
-            out2_dir = os.path.join(all_data_dir,"o2")
-            out3_dir = os.path.join(all_data_dir,"o3")#   TEED =output 3
-            out4_dir = os.path.join(all_data_dir,"o4") # TEED = average
-            out5_dir = os.path.join(all_data_dir,"o5")# fusion # TEED
-            out6_dir = os.path.join(all_data_dir,"o6") # fusion
+            out1_dir = os.path.join(all_data_dir, "o1")
+            out2_dir = os.path.join(all_data_dir, "o2")
+            out3_dir = os.path.join(all_data_dir, "o3")  # TEED =output 3
+            out4_dir = os.path.join(all_data_dir, "o4")  # TEED = average
+            out5_dir = os.path.join(all_data_dir, "o5")  # fusion # TEED
+            out6_dir = os.path.join(all_data_dir, "o6")  # fusion
             os.makedirs(out1_dir, exist_ok=True)
             os.makedirs(out2_dir, exist_ok=True)
             os.makedirs(out3_dir, exist_ok=True)
@@ -132,12 +133,12 @@ def save_image_batch_to_disk(tensor, output_dir, file_names, img_shape=None, arg
                 # Resize prediction to match input image size
                 if not tmp_img.shape[1] == i_shape[0] or not tmp_img.shape[0] == i_shape[1]:
                     tmp_img = cv2.resize(tmp_img, (i_shape[0], i_shape[1]))
-                    tmp_img2 = cv2.resize(tmp_img2, (i_shape[0], i_shape[1])) if tmp2 is not None else None
-
+                    tmp_img2 = cv2.resize(
+                        tmp_img2, (i_shape[0], i_shape[1])) if tmp2 is not None else None
 
                 if tmp2 is not None:
-                    tmp_mask = np.logical_and(tmp_img>128,tmp_img2<128)
-                    tmp_img= np.where(tmp_mask, tmp_img2, tmp_img)
+                    tmp_mask = np.logical_and(tmp_img > 128, tmp_img2 < 128)
+                    tmp_img = np.where(tmp_mask, tmp_img2, tmp_img)
                     preds.append(tmp_img)
 
                 else:
@@ -151,8 +152,8 @@ def save_image_batch_to_disk(tensor, output_dir, file_names, img_shape=None, arg
                         fuse2 = tmp_img2
                         fuse2 = fuse2.astype(np.uint8)
                         # fuse = fuse-fuse2
-                        fuse_mask=np.logical_and(fuse>128,fuse2<128)
-                        fuse = np.where(fuse_mask,fuse2, fuse)
+                        fuse_mask = np.logical_and(fuse > 128, fuse2 < 128)
+                        fuse = np.where(fuse_mask, fuse2, fuse)
 
                         # print(fuse.shape, fuse_mask.shape)
 
@@ -164,12 +165,12 @@ def save_image_batch_to_disk(tensor, output_dir, file_names, img_shape=None, arg
             cv2.imwrite(output_file_name_f, fuse)
             # cv2.imwrite(output_file_name_a, average)
             if predict_all:
-                cv2.imwrite(os.path.join(out1_dir,file_name),preds[0])
-                cv2.imwrite(os.path.join(out2_dir,file_name),preds[1])
-                cv2.imwrite(os.path.join(out3_dir,file_name),preds[2])
-                cv2.imwrite(os.path.join(out4_dir,file_name),average)
-                cv2.imwrite(os.path.join(out5_dir,file_name),fuse)
-                cv2.imwrite(os.path.join(out6_dir,file_name),fuse)
+                cv2.imwrite(os.path.join(out1_dir, file_name), preds[0])
+                cv2.imwrite(os.path.join(out2_dir, file_name), preds[1])
+                cv2.imwrite(os.path.join(out3_dir, file_name), preds[2])
+                cv2.imwrite(os.path.join(out4_dir, file_name), average)
+                cv2.imwrite(os.path.join(out5_dir, file_name), fuse)
+                cv2.imwrite(os.path.join(out6_dir, file_name), fuse)
 
             idx += 1
 
@@ -258,27 +259,26 @@ def visualize_result(imgs_list, arg):
     return imgs
 
 
-
 if __name__ == '__main__':
 
-    img_base_dir='tmp_edge'
-    gt_base_dir='C:/Users/xavysp/dataset/BIPED/edges/edge_maps/test/rgbr'
+    img_base_dir = 'tmp_edge'
+    gt_base_dir = 'C:/Users/xavysp/dataset/BIPED/edges/edge_maps/test/rgbr'
     # gt_base_dir='C:/Users/xavysp/dataset/BRIND/test_edges'
     # gt_base_dir='C:/Users/xavysp/dataset/UDED/gt'
     vers = 'TEED model in BIPED'
     list_img = os.listdir(img_base_dir)
     list_gt = os.listdir(gt_base_dir)
-    mse_list=[]
-    psnr_list=[]
-    mae_list=[]
+    mse_list = []
+    psnr_list = []
+    mae_list = []
 
-    for img_name, gt_name in zip(list_img,list_gt):
+    for img_name, gt_name in zip(list_img, list_gt):
 
         # print(img_name, '   ', gt_name)
-        tmp_img = cv2.imread(os.path.join(img_base_dir,img_name),0)
-        tmp_img = cv2.bitwise_not(tmp_img) # if the image's background
+        tmp_img = cv2.imread(os.path.join(img_base_dir, img_name), 0)
+        tmp_img = cv2.bitwise_not(tmp_img)  # if the image's background
         # is white uncomment this line
-        tmp_gt = cv2.imread(os.path.join(gt_base_dir,gt_name),0)
+        tmp_gt = cv2.imread(os.path.join(gt_base_dir, gt_name), 0)
         # print(f"image {img_name} {tmp_img.shape}")
         # print(f"gt {gt_name} {tmp_gt.shape}")
         a = tmp_img.copy()
@@ -295,12 +295,12 @@ if __name__ == '__main__':
         mae_list.append(mae)
         print(f"PSNR= {psnr} in {img_name}")
 
-    av_psnr =np.array(psnr_list).mean()
-    av_mse =np.array(mse_list).mean()
-    av_mae =np.array(mae_list).mean()
+    av_psnr = np.array(psnr_list).mean()
+    av_mse = np.array(mse_list).mean()
+    av_mae = np.array(mae_list).mean()
     print(" MSE results: mean ", av_mse)
     print(" MAE results: mean ", av_mae)
     # print(mse_list)
     print(" PSNR results: mean", av_psnr)
     # print(psnr_list)
-    print('version: ',vers)
+    print('version: ', vers)
