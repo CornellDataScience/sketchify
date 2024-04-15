@@ -19,7 +19,7 @@ def edge_smoothing(f: bytes) -> bytes:
     """
     # Converts binary file to numpy array
     image = np.array(Image.open(io.BytesIO(f)))
-    
+
     # Sets the kernels to be used for opening and closing
     # These kernels can be adjusted to be the best-performing variant.
     kernel_opening = (3, 3)
@@ -201,16 +201,3 @@ def display(img_og, img_new):
     plt.subplot(122), plt.imshow(img_new, cmap='gray')
     plt.title('Altered Image'), plt.xticks([]), plt.yticks([])
     plt.show()
-
-# Load and read an image
-#file_path = "../../public/canny_output.png"
-#image = Image.open(file_path)
-#img_byte_arr = io.BytesIO()
-#image.save(img_byte_arr, format='JPEG')
-
-# Convert the saved image to binary
-#img_bytes = img_byte_arr.getvalue()
-
-# Pass in the binary file
-#edge_smoothing(img_bytes)
-
