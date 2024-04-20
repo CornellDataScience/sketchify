@@ -1,14 +1,13 @@
-// preload.js
+const { contextBridge, ipcRenderer } = require("electron");
 
-// All the Node.js APIs are available in the preload process.
-// It has the same sandbox as a Chrome extension.
-window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector, text) => {
-    const element = document.getElementById(selector)
-    if (element) element.innerText = text
-  }
+contextBridge.exposeInMainWorld("electronAPI", {
+  // Function to send an IPC message to run the Python script
+  runPythonScript: () => ipcRenderer.send("run-python-script"),
 
-  for (const dependency of ['chrome', 'node', 'electron']) {
-    replaceText(`${dependency}-version`, process.versions[dependency])
-  }
-})
+  // Function to subscribe to the Python script response IPC message
+  handlePythonScriptResponse: (callback) => {
+    ipcRenderer.on("python-script-response", (event, ...args) =>
+      callback(...args)
+    );
+  },
+});
