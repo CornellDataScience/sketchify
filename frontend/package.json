@@ -1,15 +1,47 @@
 {
-  "name": "sketchy",
+  "name": "my-electron-app",
   "version": "1.0.0",
-  "description": "Turning images into coloring book pages with infinite resolution.",
+  "description": "App for sketchy",
   "main": "main.js",
-  "repository": "https://github.com/CornellDataScience/sketchy",
-  "author": "Cornell Data Science",
-  "license": "MIT",
-  "devDependencies": {
-    "electron": "^29.1.5"
-  },
   "scripts": {
-    "start": "electron ."
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "author": "Alice Um",
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": {
+            "name": "MyElectronApp",
+            "format": "ULFO"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        }
+      ]
+    }
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.4.0",
+    "@electron-forge/maker-deb": "^7.4.0",
+    "@electron-forge/maker-dmg": "^7.4.0",
+    "@electron-forge/maker-rpm": "^7.4.0",
+    "@electron-forge/maker-zip": "^7.4.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.4.0",
+    "@electron-forge/plugin-fuses": "^7.4.0",
+    "@electron/fuses": "^1.8.0",
+    "electron": "^30.0.1"
+  },
+  "dependencies": {
+    "python-shell": "^5.0.0"
   }
 }
