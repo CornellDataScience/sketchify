@@ -1,21 +1,29 @@
 // main.js
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog} = require('electron')
 const path = require('node:path')
+const fs = require('fs');
+const { spawn } = require('child_process');
+
+let mainWindow = null;
 
 const createWindow = () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
     }
   })
 
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
+  document.getElementById('check-similarity').disabled = true;
 
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
@@ -40,6 +48,50 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
+
+ipcMain.on('open-directory-dialog', (event) => {
+  dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile']
+  }).then(result => {
+      console.log(result.filePaths);
+      event.sender.send('selected-file-path', result.filePaths[0]);
+  }).catch(err => {
+      console.log(err);
+  });
+});
+
+ipcMain.on('open-directory-sketch', (event) => {
+  dialog.showOpenDialog(mainWindow, {
+      properties: ['openFile']
+  }).then(result => {
+      console.log(result.filePaths);
+      event.sender.send('selected-sketch-path', result.filePaths[0]);
+  }).catch(err => {
+      console.log(err);
+  });
+});
+
+ipcMain.on('check-image-similarity',(event, imgPath, sketchPath) => {
+    console.log(imgPath);
+    console.log(sketchPath);
+
+    scriptPath = path.join(__dirname, '../ml/main.py');
+
+    const pythonProcess = spawn('python', [scriptPath, imgPath, sketchPath]);
+
+    pythonProcess.stdout.on('data', (data) => {
+        event.sender.send('similarity-results', data.toString());
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+        console.error(`stderr: ${data}`);
+    });
+
+    pythonProcess.on('close', (code) => {
+        console.log(`Child process exited with code ${code}`);
+    });
+});
+
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

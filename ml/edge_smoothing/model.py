@@ -118,7 +118,6 @@ def contour_preparation(img):
     dilated_edges = cv2.dilate(img, (3, 3), iterations=1)
 
     # Denoising the image
-    print('a')
     dst = cv2.fastNlMeansDenoising(dilated_edges, 11, 21, 25)
 
     # Setting a threshold for contour finding

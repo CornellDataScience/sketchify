@@ -6,6 +6,8 @@
   <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
   <title>Hello World!</title>
+  <script defer src="render.js"></script>
+  <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
@@ -13,6 +15,16 @@
   We are using Node.js <span id="node-version"></span>,
   Chromium <span id="chrome-version"></span>,
   and Electron <span id="electron-version"></span>.
+
+  <button id="upload-image">Upload Image</button>
+  <button id="upload-sketch">Upload Sketch</button>
+  <button id="check-similarity" class="checkSimilarity">Check Similarity</button>
+
+  <h1 id="similarity-score"></h1>
+
+  <img id="displayImage" class="displayImage">
+  <img id="displaySketch" class="displaySketch">
+
 </body>
 
 </html>
