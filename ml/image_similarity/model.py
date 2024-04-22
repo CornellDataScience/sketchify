@@ -30,9 +30,9 @@ def image_similarity(image1: bytes, image2: bytes) -> float:
     return similarity_score
 
 if __name__ == "__main__": 
-    with open ('../../public/coloring002.jpg','rb') as f: 
+    with open ('../../public/coloring002.jpg', 'rb') as f:
         r = f.read()
-    with open ('../../public/IMG_2124.jpeg','rb') as f:
+    with open ('../../public/IMG_0492.jpg', 'rb') as f:
         s = f.read()
     similarity_score = image_similarity(r, s)
     print(similarity_score)
