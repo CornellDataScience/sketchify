@@ -1,5 +1,5 @@
 from image_segmentation.model import image_segmentation
-from edge_detection.model import edge_detection
+from ml.edge_detection.teed.model import edge_detection
 from edge_smoothing.model import edge_smoothing
 from convert_svg.model import convert_svg
 
