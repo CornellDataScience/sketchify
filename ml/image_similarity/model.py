@@ -1,6 +1,8 @@
 from skimage.metrics import structural_similarity as ssim
 import cv2
 import numpy as np
+
+
 def image_similarity(image1: bytes, image2: bytes) -> float:
     """
     Returns the similarity as a float score between two images using the Structural Similarity Index
@@ -17,7 +19,8 @@ def image_similarity(image1: bytes, image2: bytes) -> float:
     nparr2 = np.frombuffer(image2, np.uint8)
 
     # Decode images
-    image1 = cv2.imdecode(nparr1, cv2.IMREAD_GRAYSCALE)  # SSIM comparison is done on grayscale images
+    # SSIM comparison is done on grayscale images
+    image1 = cv2.imdecode(nparr1, cv2.IMREAD_GRAYSCALE)
     image2 = cv2.imdecode(nparr2, cv2.IMREAD_GRAYSCALE)
 
     # Ensure the images are the same size
@@ -28,11 +31,3 @@ def image_similarity(image1: bytes, image2: bytes) -> float:
     similarity_score, _ = ssim(image1, image2, full=True)
 
     return similarity_score
-
-if __name__ == "__main__": 
-    with open ('../../public/coloring002.jpg', 'rb') as f:
-        r = f.read()
-    with open ('../../public/IMG_0492.jpg', 'rb') as f:
-        s = f.read()
-    similarity_score = image_similarity(r, s)
-    print(similarity_score)
