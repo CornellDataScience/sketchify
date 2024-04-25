@@ -30,10 +30,17 @@ def edge_detection(f: bytes) -> bytes:
         binary_data = file.read()
 
     image = np.array(Image.open(io.BytesIO(binary_data)))
-    # gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) 
+
+    # invert TEED output
+    inverted_image = 255 - image
+
+    # convert back to binary data
+    is_success, im_buf_arr = cv2.imencode(".png", inverted_image)
+    inverted_binary_data = im_buf_arr.tobytes()
+
 
     # Delete temporary files
     os.remove(input_path)
     os.remove(output_path)
 
-    return binary_data, image
+    return inverted_binary_data

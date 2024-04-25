@@ -22,4 +22,5 @@ def edge_detection(f: bytes) -> bytes:
     is_success, im_buf_arr = cv2.imencode(".jpg", edges)
     byte_im = im_buf_arr.tobytes()
 
-    return byte_im, edges
+    return byte_im
+    
