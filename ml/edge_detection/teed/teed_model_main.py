@@ -22,8 +22,9 @@ def teed_inference(folder_path: str):
     model = TED().to(device)
 
     # START TEED
-    checkpoint_path = os.path.join(
-        "edge_detection", "teed", "checkpoints", 'BIPED', "5/5_model.pth")
+    checkpoint_path = "../ml/edge_detection/teed/checkpoints/BIPED/5/5_model.pth"
+    #checkpoint_path = os.path.join(
+        #"edge_detection", "teed", "checkpoints", 'BIPED', "5/5_model.pth")
     ini_epoch = 8
     model.load_state_dict(torch.load(checkpoint_path,
                                      map_location=device))
@@ -63,7 +64,7 @@ def teed_inference(folder_path: str):
             file_names = sample_batched['file_names']
             image_shape = sample_batched['image_shape']
 
-            print(f"{file_names}: {images.shape}")
+            #print(f"{file_names}: {images.shape}")
             end = time.perf_counter()
             if device.type == 'cuda':
                 torch.cuda.synchronize()
@@ -73,7 +74,7 @@ def teed_inference(folder_path: str):
             tmp_duration = time.perf_counter() - end
             total_duration.append(tmp_duration)
             save_image_batch_to_disk(preds,
-                                     "edge_detection/teed/output",  # output_dir
+                                     "../ml/edge_detection/teed/output",  # output_dir
                                      file_names,
                                      image_shape,
                                      arg=args)
