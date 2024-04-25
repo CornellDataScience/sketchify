@@ -18,7 +18,8 @@ def edge_detection(f: bytes) -> bytes:
     image = np.array(Image.open(io.BytesIO(f)))
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     edges = cv2.Canny(gray_image, 100, 200)
+    print(edges)
     is_success, im_buf_arr = cv2.imencode(".jpg", edges)
     byte_im = im_buf_arr.tobytes()
 
-    return byte_im
+    return byte_im, edges

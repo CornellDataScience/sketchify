@@ -1,7 +1,8 @@
 from image_segmentation.model import image_segmentation
-from ml.edge_detection.teed.model import edge_detection
+from edge_detection.teed.model import edge_detection
 from edge_smoothing.model import edge_smoothing
 from convert_svg.model import convert_svg
+
 
 # Load
 image_path = '../public/bear_fishing.jpg'
@@ -22,3 +23,4 @@ svg = convert_svg(smoothed_image)
 segmented_image_path = '../public/bear_fishing_output.svg'
 with open(segmented_image_path, 'wb') as f:
     f.write(svg)
+

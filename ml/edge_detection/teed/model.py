@@ -29,8 +29,11 @@ def edge_detection(f: bytes) -> bytes:
     with open(output_path, 'rb') as file:
         binary_data = file.read()
 
+    image = np.array(Image.open(io.BytesIO(binary_data)))
+    # gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) 
+
     # Delete temporary files
     os.remove(input_path)
     os.remove(output_path)
 
-    return binary_data
+    return binary_data, image

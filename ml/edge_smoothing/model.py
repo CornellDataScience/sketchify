@@ -116,7 +116,7 @@ def contour_preparation(img):
     """
     # Dilate the edges before denoising
     # Necessary to prevent thin prominent lines from weathering away
-    dilated_edges = cv2.dilate(img, (3, 3), iterations=1)
+    dilated_edges = cv2.dilate(img, (3, 1), iterations=1)
 
     # Denoising the image
     dst = cv2.fastNlMeansDenoising(dilated_edges, 11, 21, 25)
