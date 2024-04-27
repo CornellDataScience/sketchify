@@ -71,7 +71,7 @@ app.on("activate", () => {
 const getPythonFilesPath = () => {
   if (isDev) {
     console.log("Running in development");
-    return "./python";
+    return "../ml";
   } else {
     console.log("Running in production");
     return `${process.resourcesPath}/python`;
@@ -82,7 +82,7 @@ ipcMain.on("run-python-script", (event) => {
   // Use the resources path since we want to store all of our Python files there.
   // If you want to access the app.asar in resources, use app.getAppPath()
   const pythonFilePath = getPythonFilesPath();
-  exec(`python ${pythonFilePath}/cool.py`, (error, stdout, stderr) => {
+  exec(`cd ${pythonFilePath} && python -m cool`, (error, stdout, stderr) => {
     if (error) {
       console.error(`exec error: ${error}`);
       event.reply("python-script-response", `Error: ${error.message}`);
@@ -103,10 +103,10 @@ ipcMain.on("open-directory-dialog", (event) => {
       properties: ["openFile"],
     })
     .then((result) => {
-      console.log(result.filePaths);
+      // console.log(result.filePaths);
       const imgPath = result.filePaths[0];
       const base64 = fs.readFileSync(imgPath).toString("base64");
-      event.reply("open-image-response", base64);
+      event.reply("open-image-response", { bytes: base64, path: imgPath });
       //event.sender.send('selected-file-path', result.filePaths[0]);
     })
     .catch((err) => {
@@ -120,10 +120,10 @@ ipcMain.on("open-directory-sketch", (event) => {
       properties: ["openFile"],
     })
     .then((result) => {
-      console.log(result.filePaths);
+      // console.log(result.filePaths);
       const imgPath = result.filePaths[0];
       const base64 = fs.readFileSync(imgPath).toString("base64");
-      event.reply("open-sketch-response", base64);
+      event.reply("open-sketch-response", { bytes: base64, path: imgPath });
       //event.sender.send('selected-sketch-path', result.filePaths[0]);
     })
     .catch((err) => {
@@ -135,8 +135,9 @@ ipcMain.on("check-image-similarity", (event, imgPath, sketchPath) => {
   console.log(imgPath);
   console.log(sketchPath);
 
+  const pythonFilePath = getPythonFilesPath();
   exec(
-    `python ../ml/main.py ${imgPath} ${sketchPath}`,
+    `cd ${pythonFilePath} && python -m main ${imgPath.path} ${sketchPath.path}`,
     (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`);

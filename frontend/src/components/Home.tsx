@@ -2,8 +2,14 @@ import { useState, useEffect } from "react";
 
 const Home: React.FC = () => {
   const [output, setOutput] = useState("");
-  const [ogImage, setOgImage] = useState<string>("");
-  const [sketchImage, setSketchImage] = useState<string>("");
+  const [ogImage, setOgImage] = useState<{ bytes: string; path: string }>({
+    bytes: "",
+    path: "",
+  });
+  const [sketchImage, setSketchImage] = useState<{
+    bytes: string;
+    path: string;
+  }>({ bytes: "", path: "" });
   const [similarityScore, setSimilarityScore] = useState("");
 
   const handleClick = () => {
@@ -50,7 +56,7 @@ const Home: React.FC = () => {
       </button>
       <button
         onClick={checkSimilarity}
-        disabled={ogImage == "" || sketchImage == ""}
+        disabled={ogImage.path == "" || sketchImage.path == ""}
         id="check-similarity"
         className="checkSimilarity"
       >
@@ -59,8 +65,11 @@ const Home: React.FC = () => {
 
       <h4 id="similarity-score">Similarity Score: {similarityScore}</h4>
 
-      <img src={`data:image/jpg;base64,${ogImage}`} alt={ogImage} />
-      <img src={`data:image/jpg;base64,${sketchImage}`} alt={sketchImage} />
+      <img src={`data:image/jpg;base64,${ogImage.bytes}`} alt={ogImage.path} />
+      <img
+        src={`data:image/jpg;base64,${sketchImage.bytes}`}
+        alt={sketchImage.path}
+      />
       {output}
       <button onClick={handleClick}>asdf</button>
     </>
