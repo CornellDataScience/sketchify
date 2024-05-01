@@ -1,0 +1,10 @@
+vtracer
+opencv-python
+notebook
+matplotlib
+torch
+torchvision
+scikit-image
+scikit-learn
+kornia
+git+https://github.com/facebookresearch/segment-anything.git

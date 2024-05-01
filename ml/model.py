@@ -13,7 +13,13 @@ image_bytes = sys.stdin.buffer.read()
 image = Image.open(io.BytesIO(image_bytes))
 
 # Crop coordinates from command line arguments
-tl_x, tl_y, br_x, br_y = map(int, sys.argv[1:5])  
+try:
+    tl_x, tl_y, br_x, br_y = map(float, sys.argv[1:5])  
+    # Convert to int for pixels
+    tl_x, tl_y, br_x, br_y = int(tl_x), int(tl_y), int(br_x), int(br_y)  
+except ValueError as e:
+    print(f"Error converting coordinates to integers: {e}")
+    # sys.exit(1)
 
 # Crop the image based on the provided coordinates
 cropped_image = image.crop((tl_x, tl_y, br_x, br_y))
@@ -23,7 +29,7 @@ cropped_bytes = io.BytesIO()
 cropped_image.save(cropped_bytes, format='JPEG')
 cropped_bytes = cropped_bytes.getvalue()
 
-# Process the image
+# # Process the image
 segmented_image = image_segmentation(cropped_bytes, (tl_x, tl_y), (br_x, br_y), "image_segmentation/sam_vit_h_4b8939.pth")
 edged_image = edge_detection(segmented_image)
 smoothed_image = edge_smoothing(edged_image)
