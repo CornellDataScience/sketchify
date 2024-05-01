@@ -1,3 +1,4 @@
+import test from "node:test";
 import { useState, useEffect, useRef } from "react";
 import ReactCrop, {
   centerCrop,
@@ -39,12 +40,6 @@ const Home = () => {
       return;
     }
 
-    // Extract the crop from the image and get it as a Blob
-    const croppedImageData = await getCroppedImg(imgRef.current, completedCrop);
-
-    // buffer is needed input to electron?
-    const buffer = Buffer.from(await croppedImageData.arrayBuffer());
-
     const cropCoords = {
       tl: { x: completedCrop.x, y: completedCrop.y },
       br: {
@@ -54,10 +49,36 @@ const Home = () => {
     };
 
     // Send buffer to main process
-    window.electronAPI.runModel(buffer, cropCoords);
 
-    // Listen for response from main process
-    window.electronAPI.handleModelResponse((response: any) => {
+    const croppedImageData = await getCroppedImg(imgRef.current, completedCrop);
+
+    // Convert the blob to a buffer to save as a file (this part is specific to Electron)
+
+    getCroppedImg(imgRef.current, completedCrop)
+      .then((blob) => {
+        // Convert blob to ArrayBuffer
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const arrayBuffer = reader.result;
+          const cropCoords = {
+            tl: { x: completedCrop.x, y: completedCrop.y },
+            br: {
+              x: completedCrop.x + completedCrop.width,
+              y: completedCrop.y + completedCrop.height,
+            },
+          };
+
+          // Send ArrayBuffer and crop coordinates to the main process
+          window.electronAPI.runPythonScript(arrayBuffer, cropCoords);
+        };
+        reader.readAsArrayBuffer(blob);
+      })
+      .catch((error) =>
+        console.error("Failed to process the cropped image", error)
+      );
+
+    // // Listen for response from main process
+    window.electronAPI.handlePythonScriptResponse((response: any) => {
       console.log("Python script response:", response);
     });
   };
@@ -139,3 +160,7 @@ const Home = () => {
 };
 
 export default Home;
+
+// const buffer = Buffer.from(await croppedImageData.arrayBuffer());
+
+// window.electronAPI.runPythonScript(buffer, cropCoords);

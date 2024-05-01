@@ -74,38 +74,32 @@ const getPythonFilesPath = () => {
   }
 };
 
-ipcMain.on("run-python-script", (event) => {
-  // Use the resources path since we want to store all of our Python files there.
-  // If you want to access the app.asar in resources, use app.getAppPath()
-  const pythonFilePath = getPythonFilesPath();
-  exec(`python ${pythonFilePath}/cool.py`, (error, stdout, stderr) => {
-    if (error) {
-      console.error(`exec error: ${error}`);
-      event.reply("python-script-response", `Error: ${error.message}`);
-      return;
-    }
-    if (stderr) {
-      console.error(`stderr: ${stderr}`);
-      event.reply("python-script-response", `Error: ${stderr}`);
-      return;
-    }
-    event.reply("python-script-response", stdout);
-  });
-});
-
-ipcMain.on("run-model", async (event, imageBuffer, cropCoords) => {
+ipcMain.on("run-python-script", async (event, arrayBuffer, cropCoords) => {
   // Create a temporary file path
   const tempImagePath = path.join(
     app.getPath("temp"),
     "temp_cropped_image.jpg"
   );
 
-  // Write the image buffer to a file
+  console.log("Received arrayBuffer:", arrayBuffer);
+  const imageBuffer = Buffer.from(arrayBuffer);
+  console.log("Received arrayBuffer:", imageBuffer);
+
   fs.writeFileSync(tempImagePath, imageBuffer);
+  const { tl, br } = cropCoords;
 
   const pythonFilePath = getPythonFilesPath();
 
-  const command = `python ${pythonFilePath}/cool.py "${tempImagePath}" ${cropCoords.x} ${cropCoords.y} ${cropCoords.width} ${cropCoords.height}`;
+  // const command = `python ${pythonFilePath}/cool.py "${tempImagePath}" ${tl.x} ${tl.y} ${br.x} ${br.y}`;
+  const pythonScriptPath = path.join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+    "ml",
+    "model.py"
+  );
+  const command = `python ${pythonScriptPath} ${tl.x} ${tl.y} ${br.x} ${br.y} < "${tempImagePath}"`;
 
   exec(command, (error, stdout, stderr) => {
     // error handling
@@ -123,3 +117,44 @@ ipcMain.on("run-model", async (event, imageBuffer, cropCoords) => {
     event.reply("model-response", stdout);
   });
 });
+
+// ipcMain.on("run-python-script", (event) => {
+//   // Use the resources path since we want to store all of our Python files there.
+//   // If you want to access the app.asar in resources, use app.getAppPath()
+//   const pythonFilePath = getPythonFilesPath();
+//   exec(`python ${pythonFilePath}/cool.py`, (error, stdout, stderr) => {
+//     if (error) {
+//       console.error(`exec error: ${error}`);
+//       event.reply("python-script-response", `Error: ${error.message}`);
+//       return;
+//     }
+//     if (stderr) {
+//       console.error(`stderr: ${stderr}`);
+//       event.reply("python-script-response", `Error: ${stderr}`);
+//       return;
+//     }
+//     event.reply("python-script-response", stdout);
+//   });
+// });
+
+// if (!array) {
+//   console.error("No array buffer received");
+//   event.reply("model-response", "Error: No data received");
+//   return;
+// }
+
+// try {
+//   const buffer = Buffer.from(array);
+//   fs.writeFileSync(tempImagePath, buffer);
+
+//   // Further processing...
+// } catch (error) {
+//   console.error("Error creating Buffer:", error);
+//   event.reply("model-response", `Error: ${error.message}`);
+// }
+// const buffer = Buffer.from(imageBuffer);
+// Write the image buffer to a file
+
+// TODO: Change this to main.py with the correct paramters
+// const { tl, br } = cropCoords;
+// const command = `python ${pythonFilePath}/cool.py "${tempImagePath}" ${cropCoords.x} ${cropCoords.y} ${cropCoords.width} ${cropCoords.height}`;
