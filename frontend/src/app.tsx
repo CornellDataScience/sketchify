@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import Home from "./components/Home";
+import Home from "./components/organisms/Home";
 
 const root = createRoot(document.body);
 root.render(

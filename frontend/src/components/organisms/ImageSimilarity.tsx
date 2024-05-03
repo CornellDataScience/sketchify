@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Button from "../atoms/Button";
 
 const Home: React.FC = () => {
   const [output, setOutput] = useState("");
@@ -48,20 +49,20 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <button onClick={uploadImage} id="upload-image">
+      <Button onClick={uploadImage} id="upload-image">
         Upload Image
-      </button>
-      <button onClick={uploadSketch} id="upload-sketch">
+      </Button>
+      <Button onClick={uploadSketch} id="upload-sketch">
         Upload Sketch
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={checkSimilarity}
         disabled={ogImage.path == "" || sketchImage.path == ""}
         id="check-similarity"
-        className="checkSimilarity"
+        // className="checkSimilarity"
       >
         Check Similarity
-      </button>
+      </Button>
 
       <h4 id="similarity-score">Similarity Score: {similarityScore}</h4>
 
@@ -71,7 +72,7 @@ const Home: React.FC = () => {
         alt={sketchImage.path}
       />
       {output}
-      {/* <button onClick={handleClick}>asdf</button> */}
+      {/* <Button onClick={handleClick}>asdf</Button> */}
     </>
   );
 };

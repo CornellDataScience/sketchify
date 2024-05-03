@@ -7,6 +7,8 @@ import ReactCrop, {
   convertToPixelCrop,
 } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
+import FileInput from "../atoms/FileInput";
+import Button from "../atoms/Button";
 
 const Model = () => {
   const [image, setImage] = useState<string>("");
@@ -175,7 +177,8 @@ const Model = () => {
   return (
     <>
       {output}
-      <input type="file" onChange={handleImageChange} />
+      {/* <input type="file" onChange={handleImageChange} /> */}
+      <FileInput onChange={handleImageChange} />
       <br /> <br />
       {!!image && (
         <ReactCrop
@@ -197,7 +200,7 @@ const Model = () => {
         </ReactCrop>
       )}
       {!!completedCrop && showProcessButton && (
-        <button onClick={processCroppedImage}>Run ML Model</button>
+        <Button onClick={processCroppedImage}>Run ML Model</Button>
       )}
       <div>Output below</div>
       {outputImage.bytes && (
@@ -209,7 +212,7 @@ const Model = () => {
           />
         </div>
       )}
-      {/* <button onClick={() => console.log(outputImage.bytes)}>asdf</button> */}
+      {/* <Button onClick={() => console.log(outputImage.bytes)}>asdf</Button> */}
     </>
   );
 };

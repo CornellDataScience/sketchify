@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Model from "./Model";
 import ImageSimilarity from "./ImageSimilarity";
+import Button from "../atoms/Button";
 
 type NavItem = "MODEL" | "IMAGE SIMILARITY";
 
@@ -11,15 +12,15 @@ const Home = () => {
       {/* Nav bar */}
       CURRENT TAB: {nav}
       <br />
-      <button disabled={nav === "MODEL"} onClick={() => setNav("MODEL")}>
+      <Button disabled={nav === "MODEL"} onClick={() => setNav("MODEL")}>
         Model
-      </button>
-      <button
+      </Button>
+      <Button
         disabled={nav === "IMAGE SIMILARITY"}
         onClick={() => setNav("IMAGE SIMILARITY")}
       >
         Image Similarity
-      </button>
+      </Button>
       <hr />
       {nav === "MODEL" && <Model />}
       {nav === "IMAGE SIMILARITY" && <ImageSimilarity />}
