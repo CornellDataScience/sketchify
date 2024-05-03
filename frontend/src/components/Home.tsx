@@ -10,6 +10,7 @@ import "react-image-crop/dist/ReactCrop.css";
 
 const Home = () => {
   const [image, setImage] = useState<string>("");
+  const [imageArrayBuffer, setImageArrayBuffer] = useState(null);
   // The current crop area
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
@@ -23,6 +24,14 @@ const Home = () => {
     const file = event.target.files ? event.target.files[0] : null;
 
     if (file) {
+      // Create FileRedaer object to read selected file as ArrayBuffer
+      const readerArrayBuffer = new FileReader();
+      readerArrayBuffer.readAsArrayBuffer(file);
+      readerArrayBuffer.onload = (e) => {
+        const buf = e.target.result;
+        setImageArrayBuffer(buf);
+      };
+
       // Create FileRedaer object to read selected file
       const reader = new FileReader();
       reader.readAsDataURL(file);
@@ -68,7 +77,35 @@ const Home = () => {
           };
 
           // Send ArrayBuffer and crop coordinates to the main process
-          window.electronAPI.runModel(arrayBuffer, cropCoords);
+
+          // Use imageArrayBuffer instead of arrayBuffer so that we send in
+          // the bytes of the original image, not the smaller cropped image
+          // from Electron
+          //
+          // Use cropCordsOriginal instead of cropCoords because cropCoords
+          // are only for the coords of the smaller image. We want the (tl, br)
+          // coords of the original (much larger) image, so we need to scale
+          // tl and br accordingly
+          const originalImage = imgRef.current;
+          const cropCoordsOriginal = {
+            tl: {
+              x:
+                (cropCoords.tl.x / originalImage.width) *
+                originalImage.naturalWidth,
+              y:
+                (cropCoords.tl.y / originalImage.height) *
+                originalImage.naturalHeight,
+            },
+            br: {
+              x:
+                (cropCoords.br.x / originalImage.width) *
+                originalImage.naturalWidth,
+              y:
+                (cropCoords.br.y / originalImage.height) *
+                originalImage.naturalHeight,
+            },
+          };
+          window.electronAPI.runModel(imageArrayBuffer, cropCoordsOriginal);
         };
         reader.readAsArrayBuffer(blob);
       })

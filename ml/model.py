@@ -41,6 +41,18 @@ smoothed_image = edge_smoothing(edged_image)
 svg = convert_svg(smoothed_image)
 
 # Save the SVG output
-output_path = '../public/output.png'  # Adjust as necessary
+output_path = '../public/output-segmented.png'  # Adjust as necessary
 with open(output_path, 'wb') as f:
-    f.write(image_bytes)
+    f.write(segmented_image)
+
+output_path = '../public/output-edged.png'  # Adjust as necessary
+with open(output_path, 'wb') as f:
+    f.write(edged_image)
+
+output_path = '../public/output-smoothed.png'  # Adjust as necessary
+with open(output_path, 'wb') as f:
+    f.write(smoothed_image)
+
+output_path = '../public/output.svg'  # Adjust as necessary
+with open(output_path, 'wb') as f:
+    f.write(svg)
