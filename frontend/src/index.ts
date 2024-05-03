@@ -74,7 +74,7 @@ const getPythonFilesPath = () => {
     return "../ml";
   } else {
     console.log("Running in production");
-    return `${process.resourcesPath}/python`;
+    return `${process.resourcesPath}/ml`;
   }
 };
 
