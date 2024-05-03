@@ -29,8 +29,17 @@ def edge_detection(f: bytes) -> bytes:
     with open(output_path, 'rb') as file:
         binary_data = file.read()
 
+    image = np.array(Image.open(io.BytesIO(binary_data)))
+
+    # invert TEED output
+    inverted_image = 255 - image
+
+    # convert back to binary data
+    is_success, im_buf_arr = cv2.imencode(".png", inverted_image)
+    inverted_binary_data = im_buf_arr.tobytes()
+
     # Delete temporary files
     os.remove(input_path)
     os.remove(output_path)
 
-    return binary_data
+    return inverted_binary_data
