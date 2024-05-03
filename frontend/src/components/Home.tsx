@@ -11,8 +11,13 @@ const Home = () => {
       {/* Nav bar */}
       CURRENT TAB: {nav}
       <br />
-      <button onClick={() => setNav("MODEL")}>Model</button>
-      <button onClick={() => setNav("IMAGE SIMILARITY")}>
+      <button disabled={nav === "MODEL"} onClick={() => setNav("MODEL")}>
+        Model
+      </button>
+      <button
+        disabled={nav === "IMAGE SIMILARITY"}
+        onClick={() => setNav("IMAGE SIMILARITY")}
+      >
         Image Similarity
       </button>
       <hr />

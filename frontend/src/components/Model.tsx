@@ -209,10 +209,9 @@ const Model = () => {
           />
         </div>
       )}
-      <button onClick={() => console.log(outputImage.bytes)}>asdf</button>
+      {/* <button onClick={() => console.log(outputImage.bytes)}>asdf</button> */}
     </>
   );
 };
 
 export default Model;
-

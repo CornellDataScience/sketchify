@@ -71,7 +71,7 @@ const Home: React.FC = () => {
         alt={sketchImage.path}
       />
       {output}
-      <button onClick={handleClick}>asdf</button>
+      {/* <button onClick={handleClick}>asdf</button> */}
     </>
   );
 };
