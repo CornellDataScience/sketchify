@@ -139,8 +139,12 @@ ipcMain.on("run-model", async (event, arrayBuffer, cropCoords) => {
       event.reply("model-response", `Error: ${stderr}`);
       return;
     }
+    console.log(stdout);
     // Send the result back to the renderer process
-    event.reply("model-response", stdout);
+    // const outputImagePath = stdout;
+    // const base64 = fs.readFileSync(outputImagePath).toString("base64");
+    const base64 = stdout;
+    event.reply("model-response", { bytes: base64, path: "" });
   });
 });
 

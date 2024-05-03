@@ -11,6 +11,13 @@ import "react-image-crop/dist/ReactCrop.css";
 const Home = () => {
   const [image, setImage] = useState<string>("");
   const [imageArrayBuffer, setImageArrayBuffer] = useState(null);
+  const [outputImage, setOutputImage] = useState<{
+    bytes: string;
+    path: string;
+  }>({
+    bytes: "",
+    path: "",
+  });
   // The current crop area
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
@@ -114,8 +121,9 @@ const Home = () => {
       );
 
     // // Listen for response from main process
-    window.electronAPI.handleModelResponse((response: any) => {
-      console.log("Python script response:", response);
+    window.electronAPI.handleModelResponse((message: any) => {
+      setOutputImage(message);
+      // console.log("Python script response:", response);
     });
   };
 
@@ -191,6 +199,17 @@ const Home = () => {
       {!!completedCrop && showProcessButton && (
         <button onClick={processCroppedImage}>Run ML Model</button>
       )}
+      <div>Output below</div>
+      {outputImage.bytes && (
+        <div>
+          <img
+            src={`data:image/svg+xml;base64,${outputImage.bytes}`}
+            alt="Image is not available"
+            width="100%"
+          />
+        </div>
+      )}
+      <button onClick={() => console.log(outputImage.bytes)}>asdf</button>
     </>
   );
 };
