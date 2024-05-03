@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog } from "electron";
 import { exec } from "child_process";
 import fs from "fs";
 import isDev from "electron-is-dev";
+import path from "path";
 
 // const path = require("node:path");
 // const { spawn } = require("child_process");
@@ -94,6 +95,56 @@ ipcMain.on("run-python-script", (event) => {
       return;
     }
     event.reply("python-script-response", stdout);
+  });
+});
+
+ipcMain.on("run-model", async (event, arrayBuffer, cropCoords) => {
+  // Create a temporary file path
+  const tempImagePath = path.join(
+    app.getPath("temp"),
+    "temp_cropped_image.jpg"
+  );
+
+  console.log("Received arrayBuffer:", arrayBuffer);
+  const imageBuffer = Buffer.from(arrayBuffer);
+  console.log("Converted arrayBuffer to imageBuffer:", imageBuffer);
+
+  fs.writeFileSync(tempImagePath, imageBuffer);
+  const { tl, br } = cropCoords;
+
+  const pythonFilePath = getPythonFilesPath();
+
+  // const command = `python ${pythonFilePath}/cool.py "${tempImagePath}" ${tl.x} ${tl.y} ${br.x} ${br.y}`;
+  // const pythonScriptPath = path.join(
+  //   __dirname,
+  //   "..",
+  //   "..",
+  //   "..",
+  //   "ml",
+  //   "model.py"
+  // );
+
+  const command = `cd ${pythonFilePath} && python -m model ${tempImagePath} ${tl.x} ${tl.y} ${br.x} ${br.y}`;
+  console.log(command);
+
+  exec(command, (error, stdout, stderr) => {
+    // error handling
+    if (error) {
+      console.error(`exec error: ${error}`);
+      event.reply("model-response", `Error: ${error.message}`);
+      return;
+    }
+    if (stderr) {
+      console.error(`stderr: ${stderr}`);
+      event.reply("model-response", `Error: ${stderr}`);
+      return;
+    }
+    console.log(stdout);
+    // Send the result back to the renderer process
+    // const outputImagePath = stdout;
+    // const base64 = fs.readFileSync(outputImagePath).toString("base64");
+    const base64 = stdout;
+    event.reply("model-response", { bytes: base64, path: "" });
   });
 });
 
