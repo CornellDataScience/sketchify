@@ -30,6 +30,8 @@ from edge_smoothing.model import edge_smoothing
 from convert_svg.model import convert_svg
 from image_similarity.model import image_similarity
 import sys
+import tempfile
+import os
 
 
 def convertImage(filepath: str) -> str:
@@ -51,12 +53,13 @@ def convertImage(filepath: str) -> str:
     # Process Image
     edged_image = edge_detection(segmented_image)
     smoothed_image = edge_smoothing(edged_image)
-    svg = convert_svg(smoothed_image)
 
-    segmented_image_path = "../public/output.svg"
+    # segmented_image_path = "../public/output.svg"
 
-    with open(segmented_image_path, 'wb') as f:
-        f.write(svg)
+    # Create a temporary file to write the input binary data (image)
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.png') as f:
+        f.write(smoothed_image)
+        segmented_image_path = f.name
 
     return segmented_image_path
 
@@ -85,11 +88,12 @@ def main(img_path: str, sketch_path: str):
 
     # Runs the two functions above, saving the result svg into output.svg.
     # The similarity score is saved into finish.txt.
-    i = convertImage(img_path)
-    b = compareImages(i, sketch_path)
+    full_image_to_sketch = convertImage(img_path)
+    similarity = compareImages(full_image_to_sketch, sketch_path)
+    os.remove(full_image_to_sketch)
     # with open('finish.txt', 'wb') as fh:
     # fh.write(str(b)+'\n')
-    return str(b)
+    return str(similarity)
 
 
 if __name__ == "__main__":
