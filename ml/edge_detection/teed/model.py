@@ -38,7 +38,6 @@ def edge_detection(f: bytes) -> bytes:
     is_success, im_buf_arr = cv2.imencode(".png", inverted_image)
     inverted_binary_data = im_buf_arr.tobytes()
 
-
     # Delete temporary files
     os.remove(input_path)
     os.remove(output_path)

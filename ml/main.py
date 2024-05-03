@@ -23,4 +23,3 @@ svg = convert_svg(smoothed_image)
 segmented_image_path = '../public/bear_fishing_output.svg'
 with open(segmented_image_path, 'wb') as f:
     f.write(svg)
-
