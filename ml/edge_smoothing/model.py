@@ -48,7 +48,7 @@ def edge_smoothing(f: bytes) -> bytes:
     inverted_img = cv2.bitwise_not(closed_img)
 
     # Display the original and enhanced image
-    display(image, inverted_img)
+    # display(image, inverted_img)
 
     # byteImg = inverted_img.tobytes()
 
