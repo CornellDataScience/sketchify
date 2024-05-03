@@ -63,7 +63,7 @@ def teed_inference(folder_path: str):
             file_names = sample_batched['file_names']
             image_shape = sample_batched['image_shape']
 
-            print(f"{file_names}: {images.shape}")
+            # print(f"{file_names}: {images.shape}")
             end = time.perf_counter()
             if device.type == 'cuda':
                 torch.cuda.synchronize()
