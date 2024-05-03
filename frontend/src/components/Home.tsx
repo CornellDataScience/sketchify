@@ -1,16 +1,123 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import ReactCrop, {
+  centerCrop,
+  makeAspectCrop,
+  Crop,
+  PixelCrop,
+  convertToPixelCrop,
+} from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
 
-const Home: React.FC = () => {
+const Home = () => {
+  const [image, setImage] = useState<string>("");
+  // The current crop area
+  const [crop, setCrop] = useState<Crop>();
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const [aspect, setAspect] = useState<number | undefined>(16 / 9);
+  const [showProcessButton, setShowProcessButton] = useState(false);
+
+  // const previewCanvasRef = useRef(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files ? event.target.files[0] : null;
+
+    if (file) {
+      // Create FileRedaer object to read selected file
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        const imageData = e.target.result as string;
+        setImage(imageData);
+      };
+    }
+  };
+
+  const processCroppedImage = async () => {
+    if (!completedCrop || !imgRef.current) {
+      console.error("Required elements for processing are not present.");
+      return;
+    }
+
+    const cropCoords = {
+      tl: { x: completedCrop.x, y: completedCrop.y },
+      br: {
+        x: completedCrop.x + completedCrop.width,
+        y: completedCrop.y + completedCrop.height,
+      },
+    };
+
+    // Send buffer to main process
+
+    const croppedImageData = await getCroppedImg(imgRef.current, completedCrop);
+
+    // Convert the blob to a buffer to save as a file (this part is specific to Electron)
+
+    getCroppedImg(imgRef.current, completedCrop)
+      .then((blob) => {
+        // Convert blob to ArrayBuffer
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const arrayBuffer = reader.result;
+          const cropCoords = {
+            tl: { x: completedCrop.x, y: completedCrop.y },
+            br: {
+              x: completedCrop.x + completedCrop.width,
+              y: completedCrop.y + completedCrop.height,
+            },
+          };
+
+          // Send ArrayBuffer and crop coordinates to the main process
+          window.electronAPI.runModel(arrayBuffer, cropCoords);
+        };
+        reader.readAsArrayBuffer(blob);
+      })
+      .catch((error) =>
+        console.error("Failed to process the cropped image", error)
+      );
+
+    // // Listen for response from main process
+    window.electronAPI.handleModelResponse((response: any) => {
+      console.log("Python script response:", response);
+    });
+  };
+
+  const getCroppedImg = (
+    image: HTMLImageElement,
+    crop: Crop
+  ): Promise<Blob> => {
+    const canvas = document.createElement("canvas");
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+    canvas.width = crop.width;
+    canvas.height = crop.height;
+    const ctx = canvas.getContext("2d");
+
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      crop.width,
+      crop.height
+    );
+
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (!blob) {
+          // Blob could not be created
+          reject(new Error("Canvas is empty"));
+          return;
+        }
+        resolve(blob);
+      }, "image/jpeg");
+    });
+  };
+
   const [output, setOutput] = useState("");
-  const [ogImage, setOgImage] = useState<{ bytes: string; path: string }>({
-    bytes: "",
-    path: "",
-  });
-  const [sketchImage, setSketchImage] = useState<{
-    bytes: string;
-    path: string;
-  }>({ bytes: "", path: "" });
-  const [similarityScore, setSimilarityScore] = useState("");
 
   const handleClick = () => {
     window.electronAPI.runPythonScript();
@@ -20,58 +127,33 @@ const Home: React.FC = () => {
     });
   };
 
-  const uploadImage = () => {
-    window.electronAPI.runUploadImage();
-
-    window.electronAPI.handleImageSetResponse((message: any) => {
-      setOgImage(message);
-    });
-  };
-
-  const uploadSketch = () => {
-    window.electronAPI.runUploadSketch();
-
-    window.electronAPI.handleSketchSetResponse((message: any) => {
-      setSketchImage(message);
-    });
-  };
-
-  const checkSimilarity = () => {
-    if (ogImage && sketchImage) {
-      window.electronAPI.runImageSimilarity(ogImage, sketchImage);
-    }
-
-    window.electronAPI.handleSimilarityResponse((message: any) => {
-      setSimilarityScore(message);
-    });
-  };
-
   return (
     <>
-      <button onClick={uploadImage} id="upload-image">
-        Upload Image
-      </button>
-      <button onClick={uploadSketch} id="upload-sketch">
-        Upload Sketch
-      </button>
-      <button
-        onClick={checkSimilarity}
-        disabled={ogImage.path == "" || sketchImage.path == ""}
-        id="check-similarity"
-        className="checkSimilarity"
-      >
-        Check Similarity
-      </button>
-
-      <h4 id="similarity-score">Similarity Score: {similarityScore}</h4>
-
-      <img src={`data:image/jpg;base64,${ogImage.bytes}`} alt={ogImage.path} />
-      <img
-        src={`data:image/jpg;base64,${sketchImage.bytes}`}
-        alt={sketchImage.path}
-      />
       {output}
-      <button onClick={handleClick}>asdf</button>
+      <input type="file" onChange={handleImageChange} />
+      <br /> <br />
+      {!!image && (
+        <ReactCrop
+          crop={crop}
+          onChange={(_, percentCrop) => setCrop(percentCrop)}
+          onComplete={(c) => {
+            setCompletedCrop(c);
+            setShowProcessButton(true);
+          }}
+          minHeight={100}
+        >
+          <img
+            ref={imgRef}
+            alt="Crop me"
+            src={image}
+            style={{ maxWidth: "100%", maxHeight: "300px" }}
+            // onLoad={onImageLoad}
+          />
+        </ReactCrop>
+      )}
+      {!!completedCrop && showProcessButton && (
+        <button onClick={processCroppedImage}>Run ML Model</button>
+      )}
     </>
   );
 };

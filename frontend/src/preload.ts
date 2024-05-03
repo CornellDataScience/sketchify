@@ -5,6 +5,9 @@ const { contextBridge, ipcRenderer } = require("electron");
 contextBridge.exposeInMainWorld("electronAPI", {
   // Function to send an IPC message to run the Python script
   runPythonScript: () => ipcRenderer.send("run-python-script"),
+  runModel: (arrayBuffer: ArrayBuffer, cropCoords: any) => {
+    ipcRenderer.send("run-model", arrayBuffer, cropCoords);
+  },
   runUploadImage: () => ipcRenderer.send("open-directory-dialog"),
   runUploadSketch: () => ipcRenderer.send("open-directory-sketch"),
   runImageSimilarity: (path_og: any, path_sketch: any) =>
@@ -15,6 +18,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.on("python-script-response", (event, ...args) =>
       callback(...args)
     );
+  },
+  handleModelResponse: (callback: any) => {
+    ipcRenderer.on("model-response", (event, ...args) => callback(...args));
   },
   handleImageSetResponse: (callback: any) => {
     ipcRenderer.on("open-image-response", (event, ...args) =>
