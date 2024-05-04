@@ -16,13 +16,9 @@ def edge_detection(f: bytes) -> bytes:
     Returns:
         A binary file representing an image JPG or PNG
     """
-
     # Create a temporary file to write the input binary data (image)
-
-    # input_path = "../ml/edge_detection/teed/input/image.png"
-    # output_path = "../ml/edge_detection/teed/output/fused/image.png"
-    input_path = "sketchy/ml/edge_detection/teed/input/image.png"
-    output_path = "sketchy/ml/edge_detection/teed/output/fused/image.png"
+    input_path = "edge_detection/teed/input/image.png"
+    output_path = "edge_detection/teed/output/fused/image.png"
     with open(input_path, "wb") as file:
         file.write(f)
 
@@ -33,8 +29,17 @@ def edge_detection(f: bytes) -> bytes:
     with open(output_path, 'rb') as file:
         binary_data = file.read()
 
+    image = np.array(Image.open(io.BytesIO(binary_data)))
+
+    # invert TEED output
+    inverted_image = 255 - image
+
+    # convert back to binary data
+    is_success, im_buf_arr = cv2.imencode(".png", inverted_image)
+    inverted_binary_data = im_buf_arr.tobytes()
+
     # Delete temporary files
     os.remove(input_path)
     os.remove(output_path)
 
-    return binary_data
+    return inverted_binary_data

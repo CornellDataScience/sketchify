@@ -22,7 +22,6 @@ def teed_inference(folder_path: str):
     model = TED().to(device)
 
     # START TEED
-    # checkpoint_path = "../ml/edge_detection/teed/checkpoints/BIPED/5/5_model.pth"
     checkpoint_path = os.path.join(
         "edge_detection", "teed", "checkpoints", 'BIPED', "5/5_model.pth")
     ini_epoch = 8
