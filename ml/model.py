@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     # # Process the image
     segmented_image = image_segmentation(
-        image_bytes, (tl_x, tl_y), (br_x, br_y), "image_segmentation/sam_vit_h_4b8939.pth")
+        image_bytes, (tl_x, tl_y), (br_x, br_y))
     edged_image = edge_detection(segmented_image)
     smoothed_image = edge_smoothing(edged_image)
     svg = convert_svg(smoothed_image)
