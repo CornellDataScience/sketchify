@@ -9,6 +9,9 @@ import ReactCrop, {
 import "react-image-crop/dist/ReactCrop.css";
 import FileInput from "../atoms/FileInput";
 import Button from "../atoms/Button";
+import DropZone from "../atoms/DropZone";
+import React, {useCallback} from 'react'
+import {useDropzone} from 'react-dropzone'
 
 const Model = () => {
   const [image, setImage] = useState<string>("");
@@ -178,7 +181,7 @@ const Model = () => {
     <>
       {output}
       {/* <input type="file" onChange={handleImageChange} /> */}
-      <FileInput onChange={handleImageChange} />
+      <DropZone onChange={handleImageChange} />
       <br /> <br />
       {!!image && (
         <ReactCrop
