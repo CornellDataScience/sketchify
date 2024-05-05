@@ -8,10 +8,8 @@ import io
 from PIL import Image
 sys.path.append("..")  # Ensure the path includes 'segment_anything' module
 
-CHECKPOINT = "sam_vit_h_4b8939.pth"
 
-
-def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int], checkpoint: str) -> bytes:
+def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int], checkpoint="image_segmentation/sam_vit_b_01ec64.pth") -> bytes:
     """
     Segment a specific area of the image defined by the bounding box coordinates.
 
@@ -25,7 +23,7 @@ def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int], check
         A binary file representing the segmented area of the image in JPG or PNG format.
     """
     # Define vars for SegmentAnything
-    model_type = "vit_h"
+    model_type = "vit_b"
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     sam = sam_model_registry[model_type](
         checkpoint=checkpoint).to(device=device)

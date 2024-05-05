@@ -7,13 +7,14 @@ import io
 import skimage.filters as filters
 
 
-def edge_smoothing(f: bytes) -> bytes:
+def edge_smoothing(f: bytes, mode: str = "medium") -> bytes:
     """
     Converts an edge detection output into a coloring book outline, including
     all necessary postprocessing
 
     Args:
         f: binary file representing an image JPG or PNG
+        mode : easy, medium, hard (medium = TEED)
 
     Returns:
         A binary file representing an image JPG or PNG
@@ -27,33 +28,38 @@ def edge_smoothing(f: bytes) -> bytes:
     kernel_closing = (3, 3)
 
     # Prepare the image to be contoured
-    opened_img = opening(image, kernel_opening, 5)
+    opening_iter = 5
+
+    if mode == "medium":
+        opening_iter = 1
+
+    opened_img = opening(image, kernel_opening, opening_iter)
     prepared_img = contour_preparation(opened_img)
-    #denoised_img = denoising(prepared_img)
-    #display(image, denoised_img)
+    # denoised_img = denoising(prepared_img)
+    # display(image, denoised_img)
 
     # Contour the image
-    #contours = contour_image(denoised_img)
+    # contours = contour_image(denoised_img)
 
     # Enhance the image for plotting preparation
     # Create an empty image to draw filtered contours
-    #filtered_image = np.zeros_like(image)
+    # filtered_image = np.zeros_like(image)
 
     # Draw the filtered contours on the empty image
-    #new_image = cv2.drawContours(
-        #filtered_image, contours, -1, (255, 255, 255), thickness=cv2.FILLED)
+    # new_image = cv2.drawContours(
+    # filtered_image, contours, -1, (255, 255, 255), thickness=cv2.FILLED)
 
     # Close all of the edges
     closed_img = closing(prepared_img, kernel_closing, 2)
 
     # Invert the image
-    #inverted_img = cv2.bitwise_not(closed_img)
+    # inverted_img = cv2.bitwise_not(closed_img)
 
     # Display the original and enhanced image
-    #display(image, closed_img)
+    # display(image, closed_img)
 
     # byteImg = inverted_img.tobytes()
-    
+
     # Convert numpy array back to PIL Image
     segmented_img_pil = Image.fromarray(
         cv2.cvtColor(closed_img, cv2.COLOR_RGB2BGR))

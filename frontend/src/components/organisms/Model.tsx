@@ -122,8 +122,8 @@ const Model = () => {
       })
       .catch((error) =>
         console.error("Failed to process the cropped image", error)
-    );
-    
+      );
+
     // // Listen for response from main process
     window.electronAPI.handleModelResponse((message: any) => {
       setOutputImage(message);
@@ -142,7 +142,7 @@ const Model = () => {
     canvas.width = crop.width;
     canvas.height = crop.height;
     const ctx = canvas.getContext("2d");
-    
+
     ctx.drawImage(
       image,
       crop.x * scaleX,
@@ -183,7 +183,6 @@ const Model = () => {
       {/* <input type="file" onChange={handleImageChange} /> */}
       <FileInput onChange={handleImageChange} />
       <br /> <br />
-      
       {!!image && (
         <ReactCrop
           crop={crop}
@@ -203,11 +202,11 @@ const Model = () => {
           />
         </ReactCrop>
       )}
-      
-      {!!completedCrop && showProcessButton &&( 
-        <Button onClick={processCroppedImage} isLoading={showLoadingButton}>Run ML Model</Button>
+      {!!completedCrop && showProcessButton && (
+        <Button onClick={processCroppedImage} isLoading={showLoadingButton}>
+          Run ML Model
+        </Button>
       )}
-
       <div>Output below</div>
       {outputImage.bytes && (
         <div>

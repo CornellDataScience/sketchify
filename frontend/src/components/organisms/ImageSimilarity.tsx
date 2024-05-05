@@ -52,18 +52,24 @@ const Home: React.FC = () => {
 
   return (
     <>
-    
-    <h1 className="text-3xl text-black-800 font-bold py-4">
-    Image Similarity
-    </h1>
+      <h1 className="text-3xl text-black-800 font-bold py-4">
+        Image Similarity
+      </h1>
 
-      <div style={{ display: "flex", gap: "14px", justifyContent: "space-between", alignItems: "center"}}>
+      <div
+        style={{
+          display: "flex",
+          gap: "14px",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
         {ogImage.bytes ? (
           <img
-              src={`data:image/jpg;base64,${ogImage.bytes}`}
-              alt={ogImage.path}
-              className="w-80 h-60 relative overflow-hidden  border-dotted border-2 border-gray-300 cursor-pointer rounded-lg object-cover"
-              onClick={uploadImage}
+            src={`data:image/jpg;base64,${ogImage.bytes}`}
+            alt={ogImage.path}
+            className="w-80 h-60 relative overflow-hidden  border-dotted border-2 border-gray-300 cursor-pointer rounded-lg object-cover"
+            onClick={uploadImage}
           />
         ) : (
           <button
@@ -75,7 +81,7 @@ const Home: React.FC = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              className="w-8 h-8 text-gray-500 mb-2" 
+              className="w-8 h-8 text-gray-500 mb-2"
             >
               <path
                 strokeLinecap="round"
@@ -89,10 +95,10 @@ const Home: React.FC = () => {
         )}
         {sketchImage.bytes ? (
           <img
-              src={`data:image/jpg;base64,${sketchImage.bytes}`}
-              alt={sketchImage.path}
-              className="w-80 h-60 relative overflow-hidden border-dotted border-2 border-gray-300 cursor-pointer rounded-lg object-cover"
-              onClick={uploadSketch}
+            src={`data:image/jpg;base64,${sketchImage.bytes}`}
+            alt={sketchImage.path}
+            className="w-80 h-60 relative overflow-hidden border-dotted border-2 border-gray-300 cursor-pointer rounded-lg object-cover"
+            onClick={uploadSketch}
           />
         ) : (
           <button
@@ -104,7 +110,7 @@ const Home: React.FC = () => {
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              className="w-8 h-8 text-gray-500 mb-2" 
+              className="w-8 h-8 text-gray-500 mb-2"
             >
               <path
                 strokeLinecap="round"
@@ -115,21 +121,21 @@ const Home: React.FC = () => {
             </svg>
             <h1 className="text-gray-500 text-lg">Upload Sketch</h1>
           </button>
-      )}
+        )}
       </div>
 
       <div className="bg-blue-100 p-4 rounded-lg shadow-lg flex justify-between items-center mx-4 my-2 mt-4 gap-4">
         <h4 id="similarity-score">Similarity Score: {similarityScore}</h4>
         <div className="inline-flex items-center">
           <Button
-              onClick={checkSimilarity}
-              disabled={ogImage.path == "" || sketchImage.path == ""}
-              isLoading={showLoadingButton}
-              id="check-similarity"
-              // className="checkSimilarity"
-            >
-              Check Similarity
-            </Button>
+            onClick={checkSimilarity}
+            disabled={ogImage.path == "" || sketchImage.path == ""}
+            isLoading={showLoadingButton}
+            id="check-similarity"
+            // className="checkSimilarity"
+          >
+            Check Similarity
+          </Button>
         </div>
       </div>
       {output}
