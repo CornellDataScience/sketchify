@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Model from "./Model";
 import ImageSimilarity from "./ImageSimilarity";
+import Welcome from "./Welcome";
 import Button from "../atoms/Button";
 
-type NavItem = "MODEL" | "IMAGE SIMILARITY";
+type NavItem = "WELCOME" | "MODEL" | "IMAGE SIMILARITY";
 
 const Home = () => {
-  const [nav, setNav] = useState<NavItem>("MODEL");
+  const [nav, setNav] = useState<NavItem>("WELCOME");
   const toggleNav = (item: NavItem) => {
     setNav(item);
   };
@@ -22,6 +23,33 @@ const Home = () => {
             </h1>
           </div>
           <nav className="flex flex-col mt-5">
+            <button
+              className={`flex items-center px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none ${
+                nav === "WELCOME"
+                  ? "bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-gray-300"
+                  : "text-gray-600 hover:bg-gray-200 dark:hover:bg-gray-800"
+              }`}
+              onClick={() => toggleNav("WELCOME")}
+            >
+              <svg
+                className="w-5 h-5 me-2"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 11h2v5m-2 0h4m-2.592-8.5h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                />
+              </svg>
+              Welcome
+            </button>
             <button
               className={`flex items-center px-4 py-2 text-sm font-medium transition-colors duration-200 focus:outline-none ${
                 nav === "MODEL"
@@ -75,6 +103,7 @@ const Home = () => {
 
         {/* Main content */}
         <main className="p-8 ml-64">
+          {nav === "WELCOME" && <Welcome />}
           {nav === "MODEL" && <Model />}
           {nav === "IMAGE SIMILARITY" && <ImageSimilarity />}
         </main>
