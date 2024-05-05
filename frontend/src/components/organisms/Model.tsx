@@ -25,6 +25,7 @@ const Model = () => {
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
   const [aspect, setAspect] = useState<number | undefined>(16 / 9);
   const [showProcessButton, setShowProcessButton] = useState(false);
+  const [showLoadingButton, setShowLoadingButton] = useState(false);
 
   // const previewCanvasRef = useRef(null);
   const imgRef = useRef<HTMLImageElement>(null);
@@ -52,6 +53,7 @@ const Model = () => {
   };
 
   const processCroppedImage = async () => {
+    setShowLoadingButton(true);
     if (!completedCrop || !imgRef.current) {
       console.error("Required elements for processing are not present.");
       return;
@@ -126,6 +128,7 @@ const Model = () => {
     window.electronAPI.handleModelResponse((message: any) => {
       setOutputImage(message);
       // console.log("Python script response:", response);
+      setShowLoadingButton(false);
     });
   };
 
@@ -200,7 +203,9 @@ const Model = () => {
         </ReactCrop>
       )}
       {!!completedCrop && showProcessButton && (
-        <Button onClick={processCroppedImage}>Run ML Model</Button>
+        <Button onClick={processCroppedImage} isLoading={showLoadingButton}>
+          Run ML Model
+        </Button>
       )}
       <div>Output below</div>
       {outputImage.bytes && (
