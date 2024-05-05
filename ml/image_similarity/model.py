@@ -20,11 +20,12 @@ def image_similarity(image1: bytes, image2: bytes) -> float:
 
     # Decode images
     # SSIM comparison is done on grayscale images
-    #image1 = cv2.imdecode(nparr1, cv2.IMREAD_GRAYSCALE)
-    #image2 = cv2.imdecode(nparr2, cv2.IMREAD_GRAYSCALE)
-    
-    image1 = cv2.resize(nparr1, (256, 256))
-    image2 = cv2.resize(nparr2, (256, 256))
+    image1 = cv2.imdecode(nparr1, cv2.IMREAD_GRAYSCALE)
+    image2 = cv2.imdecode(nparr2, cv2.IMREAD_GRAYSCALE)
+
+    # Ensure the images are the same size
+    image1 = cv2.resize(image1, (256, 256))
+    image2 = cv2.resize(image2, (256, 256))
 
     # Calculate the SSIM between the two images
     similarity_score, _ = ssim(image1, image2, full=True)
