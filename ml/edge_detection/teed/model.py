@@ -4,6 +4,8 @@ import cv2
 import numpy as np
 from .teed_model_main import teed_inference
 import os
+from os import path
+path_to_curr_folder = path.abspath(path.join(path.dirname(__file__)))
 
 
 def edge_detection(f: bytes) -> bytes:
@@ -17,13 +19,13 @@ def edge_detection(f: bytes) -> bytes:
         A binary file representing an image JPG or PNG
     """
     # Create a temporary file to write the input binary data (image)
-    input_path = "edge_detection/teed/input/image.png"
-    output_path = "edge_detection/teed/output/fused/image.png"
+    input_path = f"{path_to_curr_folder}/input/image.png"
+    output_path = f"{path_to_curr_folder}/output/fused/image.png"
     with open(input_path, "wb") as file:
         file.write(f)
 
     # Run TEED inference
-    teed_inference('edge_detection/teed/input')
+    teed_inference(f'{path_to_curr_folder}/input')
 
     # Read the generated SVG data as binary
     with open(output_path, 'rb') as file:

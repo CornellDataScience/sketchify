@@ -6,10 +6,13 @@ import cv2 as cv
 import sys
 import io
 from PIL import Image
-sys.path.append("..")  # Ensure the path includes 'segment_anything' module
+# sys.path.append("..")  # Ensure the path includes 'segment_anything' module
+from os import path
+path_to_checkpoint = path.abspath(
+    path.join(path.dirname(__file__), 'sam_vit_b_01ec64.pth'))
 
 
-def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int], checkpoint="image_segmentation/sam_vit_b_01ec64.pth") -> bytes:
+def image_segmentation(f: bytes, tl: tuple[int, int], br: tuple[int, int], checkpoint=path_to_checkpoint) -> bytes:
     """
     Segment a specific area of the image defined by the bounding box coordinates.
 
