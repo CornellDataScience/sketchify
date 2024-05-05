@@ -53,7 +53,7 @@ def edge_smoothing(f: bytes, mode: str = "medium") -> bytes:
     closed_img = closing(prepared_img, kernel_closing, 2)
 
     # Invert the image
-    # inverted_img = cv2.bitwise_not(closed_img)
+    inverted_img = cv2.bitwise_not(closed_img)
 
     # Display the original and enhanced image
     # display(image, closed_img)
@@ -62,7 +62,7 @@ def edge_smoothing(f: bytes, mode: str = "medium") -> bytes:
 
     # Convert numpy array back to PIL Image
     segmented_img_pil = Image.fromarray(
-        cv2.cvtColor(closed_img, cv2.COLOR_RGB2BGR))
+        cv2.cvtColor(inverted_img, cv2.COLOR_RGB2BGR))
 
     # Save the segmented image to bytes
     img_byte_arr = io.BytesIO()
