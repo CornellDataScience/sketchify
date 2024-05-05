@@ -10,7 +10,7 @@ import torch
 import torch.nn.functional as F
 
 
-@torch.jit.script
+@torch.jit._script_if_tracing
 def smish(input):
     """
     Applies the mish function element-wise:

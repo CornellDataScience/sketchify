@@ -8,6 +8,10 @@ import torch
 
 import os
 import time
+from os import path
+path_to_curr_folder = path.abspath(path.join(path.dirname(__file__)))
+checkpoint_path = path.abspath(
+    path.join(path.dirname(__file__), 'checkpoints', 'BIPED', "5/5_model.pth"))
 
 
 def teed_inference(folder_path: str):
@@ -22,8 +26,8 @@ def teed_inference(folder_path: str):
     model = TED().to(device)
 
     # START TEED
-    checkpoint_path = os.path.join(
-        "edge_detection", "teed", "checkpoints", 'BIPED', "5/5_model.pth")
+    # checkpoint_path = os.path.join(
+    #     "edge_detection", "teed", "checkpoints", 'BIPED', "5/5_model.pth")
     ini_epoch = 8
     model.load_state_dict(torch.load(checkpoint_path,
                                      map_location=device))
@@ -73,7 +77,8 @@ def teed_inference(folder_path: str):
             tmp_duration = time.perf_counter() - end
             total_duration.append(tmp_duration)
             save_image_batch_to_disk(preds,
-                                     "edge_detection/teed/output",  # output_dir
+                                     # output_dir
+                                     f"{path_to_curr_folder}/output",
                                      file_names,
                                      image_shape,
                                      arg=args)
