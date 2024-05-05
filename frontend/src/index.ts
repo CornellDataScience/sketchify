@@ -125,7 +125,7 @@ ipcMain.on("run-model", async (event, arrayBuffer, cropCoords) => {
   //   "model.py"
   // );
 
-  const command = `${pythonFilePath}/model/model ${tempImagePath} ${tl.x} ${tl.y} ${br.x} ${br.y}`;
+  const command = `${pythonFilePath}/main/main model ${tempImagePath} ${tl.x} ${tl.y} ${br.x} ${br.y}`;
   console.log(command);
 
   exec(command, (error, stdout, stderr) => {
@@ -189,7 +189,7 @@ ipcMain.on("check-image-similarity", (event, imgPath, sketchPath) => {
 
   const pythonFilePath = getPythonFilesPath();
   exec(
-    `${pythonFilePath}/main/main ${imgPath.path} ${sketchPath.path}`,
+    `${pythonFilePath}/main/main similarity ${imgPath.path} ${sketchPath.path}`,
     (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`);

@@ -7,5 +7,4 @@ init:
 
 build:
 	cd ml && pyinstaller main.py --add-data=image_segmentation/sam_vit_b_01ec64.pth:image_segmentation --add-data=edge_detection/teed:edge_detection/teed
-	cd ml && pyinstaller model.py --add-data=image_segmentation/sam_vit_b_01ec64.pth:image_segmentation --add-data=edge_detection/teed:edge_detection/teed
 	cd frontend && npm run make
