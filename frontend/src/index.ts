@@ -73,10 +73,10 @@ app.on("activate", () => {
 const getPythonFilesPath = () => {
   if (isDev) {
     console.log("Running in development");
-    return "../ml/dist";
+    return "../ml/dist/main/main";
   } else {
     console.log("Running in production");
-    return `${process.resourcesPath}/ml/dist`;
+    return `${process.resourcesPath}/main/main`;
   }
 };
 
@@ -125,7 +125,7 @@ ipcMain.on("run-model", async (event, arrayBuffer, cropCoords) => {
   //   "model.py"
   // );
 
-  const command = `${pythonFilePath}/main/main model ${tempImagePath} ${tl.x} ${tl.y} ${br.x} ${br.y}`;
+  const command = `${pythonFilePath} model ${tempImagePath} ${tl.x} ${tl.y} ${br.x} ${br.y}`;
   console.log(command);
 
   exec(command, (error, stdout, stderr) => {
@@ -189,7 +189,7 @@ ipcMain.on("check-image-similarity", (event, imgPath, sketchPath) => {
 
   const pythonFilePath = getPythonFilesPath();
   exec(
-    `${pythonFilePath}/main/main similarity ${imgPath.path} ${sketchPath.path}`,
+    `${pythonFilePath} similarity ${imgPath.path} ${sketchPath.path}`,
     (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`);
