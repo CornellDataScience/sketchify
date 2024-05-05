@@ -9,7 +9,7 @@ import ReactCrop, {
 import "react-image-crop/dist/ReactCrop.css";
 import FileInput from "../atoms/FileInput";
 import Button from "../atoms/Button";
-import DropZone from "../atoms/DropZone";
+import Dropzone from "../atoms/Dropzone";
 import React, { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import Carousel from "../atoms/Carousel";
@@ -193,7 +193,7 @@ const Model = () => {
     <>
       {output}
       <br></br>
-      {!imageLoaded && <DropZone onChange={handleImageChange} />}
+      {!imageLoaded && <Dropzone onChange={handleImageChange} />}
       <br />
       {imageLoaded && !completedCrop && (
         <p className="text-4xl font-semibold text-blue-600/100 dark:text-blue-500/100">
