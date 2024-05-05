@@ -47,8 +47,7 @@ def convertImage(filepath: str) -> str:
     tl = (1142, 134)  # Top-left corner of the image (adjust based on your image)
     # Bottom-right corner of the image (adjust based on your image)
     br = (1739, 1064)
-    segmented_image = image_segmentation(
-        image_bytes, tl, br, "image_segmentation/sam_vit_h_4b8939.pth")
+    segmented_image = image_segmentation(image_bytes, tl, br)
 
     # Process Image
     edged_image = edge_detection(segmented_image)
