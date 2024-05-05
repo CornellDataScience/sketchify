@@ -19,7 +19,7 @@ To get started with the project, do the following steps:
 2. Run `make init` to download Meta's Segment Anything model and create a Python venv with all required dependencies.
 3. Run `make build` to start the full build pipeline. This runs Pyinstaller on the ML model and then runs Electron Forge to create the final packaged application. The only currently supported format is a `zip` file, but other formats are supported by Electron Forge.
 
-### Architecture
+## Architecture
 
 The frontend is an Electron application built with the latest web technologies, including React, TypeScript, and Tailwind CSS. A context bridge is used so that the renderer can send calls to the Node.js backend which has access to system processes.
 
@@ -32,7 +32,7 @@ The backend is a full ML pipeline that takes in a full color image and outputs a
 
 Pyinstaller is used to compile the Python scripts into binary executables. These binaries are then copied over to the `resources` folder of the Electron app during the build process of Electron Forge.
 
-### Team (SP24)
+## Team (SP24)
 
 - Leads
   - Jason Zheng (Technical Lead)
