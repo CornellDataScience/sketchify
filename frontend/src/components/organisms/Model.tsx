@@ -53,12 +53,12 @@ const Model = () => {
       reader.onload = (e) => {
         const imageData = e.target.result as string;
         setImage(imageData);
-        setImageLoaded(true);
       };
     }
 
     setOutputLoaded(false);
     setImageLoaded(true);
+    setCompletedCrop(false);
   };
 
   const processCroppedImage = async () => {
