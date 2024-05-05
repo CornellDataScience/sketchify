@@ -28,7 +28,7 @@ const Model = () => {
   });
   // The current crop area
   const [crop, setCrop] = useState<Crop>();
-  const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const [completedCrop, setCompletedCrop] = useState<PixelCrop | null>(null);
   const [aspect, setAspect] = useState<number | undefined>(16 / 9);
   const [showProcessButton, setShowProcessButton] = useState(false);
   const [showLoadingButton, setShowLoadingButton] = useState(false);
@@ -59,7 +59,7 @@ const Model = () => {
 
     setOutputLoaded(false);
     setImageLoaded(true);
-    setCompletedCrop(false);
+    setCompletedCrop(null);
   };
 
   const processCroppedImage = async () => {
@@ -237,7 +237,7 @@ const Model = () => {
       )}
       <br />
       <div className="flex items-center justify-between">
-        {imageLoaded && <FileInput onChange={handleImageChange}></FileInput>}
+        {/* {imageLoaded && <FileInput onChange={handleImageChange}></FileInput>} */}
         {!!completedCrop && showProcessButton && (
           <Button onClick={processCroppedImage} isLoading={showLoadingButton}>
             Run ML Model
